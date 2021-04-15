@@ -52,8 +52,13 @@ if sys.argv[2] == 'add':
 	#     ie int:int:long long:string
 	#  second line is the name for every PARAM
 	#     ie HERE:THERE:WHAT:ETC
+	#     a - means the same as the most recent typed out type
+	#     nothin ie before::after means take the default type
 	#  then before each function, there is a line with:
 	#     //#start PARAM0:PARAM2:etc
+	#     //#start2PARAM0:ETC is used when you want preceeding comma based on whether global stuff or not
+	#        usually for recursive calls
+	#        thus no return type at front for these ones either
 	#  where each param is referencing the order for parameters in the function
 	#  first value is the return type, so you need to be careful when making return parameters because you don't want
 	#  someone using global on it or else it will die
@@ -89,6 +94,11 @@ if sys.argv[2] == 'add':
 				if len(args[i]) >= 7 and args[i][0:6] == 'global':
 					default_args[i] = ""
 					global_replace[param_names[i]] = args[i][6:]
+				elif len(args[i]) == 1 and args[i] == '-' and i != 0:
+					args[i] = args[i-1]
+					arg_values["PARAM" +str(i)] = args[i] + ' '
+				elif len(args[i]) == 0:
+					arg_values["PARAM" + str(i)] = default_args[i] + ' '
 				else:
 					arg_values["PARAM" + str(i)] = args[i] + ' '
 		for i in range(len(args), len(default_args)):
@@ -96,9 +106,17 @@ if sys.argv[2] == 'add':
 
 		method_lines = toWriteFile.readlines()
 		for i in range(len(method_lines)):
-			if(method_lines[i][:8] == '//#start'):
-				param_line = ','.join([arg_values[key.strip()] + param_names[int(key.strip()[5:])] for key in method_lines[i][10:].split(':')[1:] if key.strip() in arg_values])
-				return_type = arg_values[method_lines[i][9:].split(':',1)[0]]
+			if(method_lines[i].strip()[:9] == '//#start2'):
+				param_line = ','.join([param_names[int(key.strip()[5:])] for key in method_lines[i].strip()[10:].split(':')[1:] if key.strip() in arg_values])
+				if param_line.strip() == "":
+					pass
+				else:
+					param_line = ', ' + param_line
+				i += 1
+				method_lines[i] = method_lines[i].replace("PARAM_INSERT", param_line)
+			elif(method_lines[i].strip()[:8] == '//#start'):
+				param_line = ','.join([arg_values[key.strip()] + param_names[int(key.strip()[5:])] for key in method_lines[i].strip()[10:].split(':')[1:] if key.strip() in arg_values])
+				return_type = arg_values[method_lines[i].strip()[9:].split(':',1)[0]]
 				i += 1
 				method_lines[i] = method_lines[i].replace("RETURN", return_type)
 				method_lines[i] = method_lines[i].replace("PARAM_INSERT", param_line)
@@ -116,7 +134,7 @@ if sys.argv[2] == 'add':
 		alreadyAdded.add(name)
 		methods[name] = [index - size, index-1]
 		toWriteFile.close()
-elif sys.argv[2] == 'run':
+else:
 #should add a run one that sweeps through the file looking for inline commands for pasted text
 #so basically just this else statement
 	lines = file.readlines()
@@ -132,8 +150,7 @@ elif sys.argv[2] == 'run':
 				i += 1
 				lines.insert(i, '\t'*(numtabs+1) + f"cin >> {name}[i];\n")
 				del lines[i+1]
-else:
-	exit(1)
+
 file = open(sys.argv[1], "w")
 first_line = "//! " + " ".join([str(key)+':'+str(item[0]+1+(1-start_print)) + ':'+str(item[1]+1+(1-start_print)) for key, item in methods.items()]) + '\n'
 file.write(first_line)

@@ -1,2 +1,4 @@
 gcd C:/Users/jerry/bin/gcd.txt
 lcm C:/Users/jerry/bin/lcm.txt
+dfs C:/Users/jerry/bin/dfs.txt
+bfs C:/Users/jerry/bin/bfs.txt

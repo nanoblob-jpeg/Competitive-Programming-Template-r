@@ -1,0 +1,13 @@
+long long:vector<vector<long long>>&:vector<bool>&:vector<int>&:void
+v:adj:visited:parents:ret
+//#start PARAM4:PARAM0:PARAM1:PARAM2:PARAM3
+RETURN dfs(PARAM_INSERT){
+	visited[v] = true;
+	for(int i{}; i < adj[v].size(); ++i){
+		if(!visited[adj[v][i]]){
+			parents[adj[v][i]] = v;
+			//#start2PARAM1:PARAM2:PARAM3
+			dfs(adj[v][i] PARAM_INSERT);
+		}
+	}
+}
