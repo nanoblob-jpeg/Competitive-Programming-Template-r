@@ -1,0 +1,2 @@
+gcd C:/Users/jerry/bin/gcd.txt
+lcm C:/Users/jerry/bin/lcm.txt
