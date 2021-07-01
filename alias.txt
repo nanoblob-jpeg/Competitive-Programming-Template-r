@@ -2,3 +2,9 @@ gcd C:/Users/jerry/bin/gcd.txt
 lcm C:/Users/jerry/bin/lcm.txt
 dfs C:/Users/jerry/bin/dfs.txt
 bfs C:/Users/jerry/bin/bfs.txt
+modinv C:/Users/jerry/bin/modinv.txt
+geo C:/Users/jerry/bin/geo.txt
+choose C:/Users/jerry/bin/choose.txt
+pascal C:/Users/jerry/bin/pascal.txt
+pyramid C:/Users/jerry/bin/pyramid.txt
+determinant C:/Users/jerry/bin/determinant.txt

@@ -1,0 +1,26 @@
+//adapted from:
+//https://cp-algorithms.com/algebra/extended-euclid-algorithm.html
+//https://cp-algorithms.com/algebra/module-inverse.html
+long long migcdext(long long a, long long b, long long &c, long long &d){
+	if(b == 0){
+		c = 1;
+		d = 0;
+		return a;
+	}
+	long long t, t2;
+	long long gcd = migcdext(b, a%b, t, t2);
+	c = t2;
+	d = t - (a/b)*t2;
+	return gcd;
+}
+
+long long modinv(long long a, long long m){
+	long long t, t2;
+	long long gcd = migcdext(a, m, t, t2);
+	if(gcd != 1){
+		return -1;
+	}else{
+		long long res = (t%m + m)%m;
+		return res;
+	}
+}

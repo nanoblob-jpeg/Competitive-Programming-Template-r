@@ -1,0 +1,26 @@
+long double determinant(vector<vector<long double>> &mat){
+    if(mat.size() == 1){
+        return mat[0][0];
+    }
+    int size = mat.size();
+    long double out{};
+    for(int i{}; i < mat.size(); ++i){
+        vector<vector<long double>> newMat(size-1, vector<long double>(size-1, 0));
+        int counter{};
+        for(int j{1}; j < size; ++j){
+            for(int k{}; k < size; ++k){
+                if(k != i){
+                    newMat[counter/(size-1)][counter%(size-1)] = mat[j][k];
+                    counter++;
+                }
+            }
+        }
+        long double temp = determinant(newMat);
+        if(i%2){
+            out -= mat[0][i] * temp;
+        }else{
+            out += mat[0][i] * temp;
+        }
+    }
+    return out;
+}

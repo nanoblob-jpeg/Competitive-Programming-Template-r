@@ -1,0 +1,50 @@
+const long long MAXCHOOSEN=500;
+const long long MODCHOOSE=1000000007;
+
+long long fact[MAXCHOOSEN];
+long long inv[MAXCHOOSEN];
+long long choose[MAXCHOOSEN][MAXCHOOSEN];
+long long fastexp(long long b, long long exp){
+	if(exp == 0)
+		return 1;
+	long long out=1;
+	while(exp > 0){
+		if(exp&1){
+			out*=b;
+			out %= MODCHOOSE;
+		}
+		b *= b;
+		b %= MODCHOOSE;
+		exp >>= 1;
+	}
+	return out;
+}
+void chooseinit(){
+	fact[0] = 1;
+	inv[0] = 1;
+	for(int i{1}; i <=MAXCHOOSEN; ++i){
+		fact[i] = (fact[i-1]*i)%MODCHOOSE;
+		inv[i] = fastexp(fact[i], MODCHOOSE-2);
+	}
+	for(int i{}; i <=MAXCHOOSEN;++i){
+		for(int j{}; j <=i; ++j){
+			choose[i][j] = ((fact[i]*inv[j])%MODCHOOSE * inv[i-j])%MODCHOOSE;
+		}
+	}
+}
+
+long long nchoosek(long long n, long long k){
+	long long t = n-k;
+	long long invij, invj;
+	long long facts=1;
+	if(k == 0)
+		invj=1;
+	for(int i{1}; i <= n; ++i){
+		facts*=i;
+		if(i == k)
+			invj = fastexp(facts, MODCHOOSE-2);
+		if(i == t)
+			invij = fastexp(facts, MODCHOOSE-2);
+	}
+	return ((facts*invj)%MODCHOOSE*invij)%MODCHOOSE;
+}

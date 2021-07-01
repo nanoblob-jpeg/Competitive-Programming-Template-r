@@ -1,0 +1,14 @@
+const long long MAXCHOOSEN=105;
+
+long double choose[MAXCHOOSEN][MAXCHOOSEN];
+
+void pascal(){
+	choose[0][0] = 1;
+	for(int i{1}; i < MAXCHOOSEN;++i){
+        choose[i][0] = 1;
+		for(int j{1}; j < i; ++j){
+			choose[i][j] = choose[i-1][j-1] + choose[i-1][j];
+		}
+        choose[i][i] = 1;
+	}
+}

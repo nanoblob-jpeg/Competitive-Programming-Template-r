@@ -34,7 +34,7 @@ file.close()
 file = open(sys.argv[1], "r")
 lines = None
 
-if sys.argv[2] == 'add':
+if sys.argv[2] == 'temp':
 	lines = file.readlines()
 	file.close()
 	index = 0
@@ -107,7 +107,7 @@ if sys.argv[2] == 'add':
 		method_lines = toWriteFile.readlines()
 		for i in range(len(method_lines)):
 			if(method_lines[i].strip()[:9] == '//#start2'):
-				param_line = ','.join([param_names[int(key.strip()[5:])] for key in method_lines[i].strip()[10:].split(':')[1:] if key.strip() in arg_values])
+				param_line = ','.join([param_names[int(key.strip()[5:])] for key in method_lines[i].strip()[9:].split(':') if key.strip() in arg_values])
 				if param_line.strip() == "":
 					pass
 				else:
@@ -133,6 +133,18 @@ if sys.argv[2] == 'add':
 			index += 1
 		alreadyAdded.add(name)
 		methods[name] = [index - size, index-1]
+		toWriteFile.close()
+elif sys.argv[2] == 'add':
+	lines = file.readlines()
+	file.close()
+	index = 0
+	while lines[index].strip() != '//! function insert':
+		index += 1
+	for name in sys.argv[3:]:
+		toWriteFile = open(textFiles[name].rsplit('/',1)[0] + "/paste" + textFiles[name].rsplit('/',1)[1], "r")
+		for line in toWriteFile:
+			lines.insert(index, line)
+			index += 1
 		toWriteFile.close()
 else:
 #should add a run one that sweeps through the file looking for inline commands for pasted text
