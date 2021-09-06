@@ -34,6 +34,8 @@ void chooseinit(){
 }
 
 long long nchoosek(long long n, long long k){
+	if(n = k)
+		return 1;
 	long long t = n-k;
 	long long invij, invj;
 	long long facts=1;

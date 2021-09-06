@@ -1,0 +1,31 @@
+
+const long long FACTOR_MAX_N = 1e7;
+long long spf[FACTOR_MAX_N+1];
+
+//factorization code from geeksforgeeks:
+//https://www.geeksforgeeks.org/prime-factorization-using-sieve-olog-n-multiple-queries/
+void factorInit(){
+	memset(spf, 0, sizeof(spf));
+	for(int i{2}; i <= FACTOR_MAX_N; ++i){
+		if(i%2 == 0)
+			spf[i] = 2;
+		else
+			spf[i] = i;
+	}
+
+	for(int i{3}; i <= FACTOR_MAX_N; i += 2){
+		if(spf[i] == i){
+			for(int j = i*i; j <= FACTOR_MAX_N; j += i){
+				if(spf[j] == j)
+					spf[j] = i;
+			}
+		}
+	}
+}
+
+void factor(int n, vector<int> &p){
+	while(n > 1){
+		p.push_back(spf[n]);
+		n /= spf[n];
+	}
+}

@@ -8,3 +8,5 @@ choose C:/Users/jerry/bin/choose.txt
 pascal C:/Users/jerry/bin/pascal.txt
 pyramid C:/Users/jerry/bin/pyramid.txt
 determinant C:/Users/jerry/bin/determinant.txt
+factor C:/Users/jerry/bin/factor.txt
+hash C:/Users/jerry/bin/hash.txt
