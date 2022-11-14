@@ -122,7 +122,10 @@ def call(filename, templates):
 					method_lines[i] = method_lines[i].replace(key, value)
 		size = len(method_lines)
 		for x in method_lines:
-			lines.insert(index, x)
+			if(x[-1] == '\n'):
+				lines.insert(index, x)
+			else:
+				lines.insert(index, x+'\n')
 			index += 1
 		alreadyAdded.add(name)
 		methods[name] = [index - size, index-1]

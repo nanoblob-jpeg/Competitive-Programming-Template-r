@@ -19,7 +19,10 @@ def call(filename, templates):
 			continue
 		toWriteFile = open(functions[name], "r")
 		for line in toWriteFile:
-			lines.insert(index, line)
+			if line[-1] == '\n':
+				lines.insert(index, line)
+			else:
+				lines.insert(index, line+'\n')
 			index += 1
 		toWriteFile.close()
 
