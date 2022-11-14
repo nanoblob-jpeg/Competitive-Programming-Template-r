@@ -3,4 +3,4 @@ if [[ $# -eq 0 ]] ; then
 	echo "need to provide file name"
 	exit 1
 fi
-cp C:/Users/jerry/Documents/comp/random/template.cpp $PWD/$1
+cp C:/Users/jerry/bin/template.cpp $PWD/$1

@@ -1,9 +1,9 @@
 const long long MAXCHOOSEN=500;
 const long long MODCHOOSE=1000000007;
 
-long long fact[MAXCHOOSEN];
-long long inv[MAXCHOOSEN];
-long long choose[MAXCHOOSEN][MAXCHOOSEN];
+long long fact[MAXCHOOSEN+1];
+long long inv[MAXCHOOSEN+1];
+long long choose[MAXCHOOSEN+1][MAXCHOOSEN+1];
 long long fastexp(long long b, long long exp){
 	if(exp == 0)
 		return 1;
@@ -34,7 +34,7 @@ void chooseinit(){
 }
 
 long long nchoosek(long long n, long long k){
-	if(n = k)
+	if(n == k)
 		return 1;
 	long long t = n-k;
 	long long invij, invj;

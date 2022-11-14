@@ -1,0 +1,34 @@
+const double pi = 3.1415926535;
+bool isclockwise(ar<int, 2> &a, ar<int, 2> &b, ar<int, 2> &c){
+    //returns true if a->b if clockwise from b->c
+    return (b[0]-a[0])*(c[1]-b[1]) - (c[0]-b[0])*(b[1]-a[1]) <= 0;
+}
+
+bool iscounter(ar<int, 2> &a, ar<int, 2> &b, ar<int, 2> &c){
+    //returns true if a->b if clockwise from b->c
+    return (b[0]-a[0])*(c[1]-b[1]) - (c[0]-b[0])*(b[1]-a[1]) >= 0;
+}
+
+void chull(vector<ar<int, 2>> &a, vector<ar<int, 2>> &lower){
+	int n = a.size();
+	sort(a.begin(), a.end());
+	vector<ar<int, 2>> upper;
+	ar<int, 2> l=a[0], r=a.back();
+	upper.push_back(l);
+	lower.push_back(l);
+	for(int i{1}; i < n; ++i){
+		if(i == n-1 || isclockwise(l, a[i], r)){
+			while(upper.size() >= 2 && iscounter(upper[upper.size()-2], upper.back(), a[i]))
+				upper.pop_back();
+			upper.push_back(a[i]);
+		}
+		if(i == n-1 || iscounter(l, a[i], r)){
+			while(lower.size() >= 2 && isclockwise(lower[lower.size()-2], lower.back(), a[i]))
+				lower.pop_back();
+			lower.push_back(a[i]);
+		}
+	}
+	for(int i = upper.size()-2; i > 0; --i){	
+		lower.push_back(upper[i]);
+	}
+}

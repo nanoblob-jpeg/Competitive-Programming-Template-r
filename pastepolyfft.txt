@@ -1,0 +1,55 @@
+int reverseBit(int x, int m){
+    int ret = 0;
+    for(int k{}; k < m; ++k){
+        if(x&(1<<k))
+            ret |= 1<<(m-k-1);
+    }
+    return ret;
+}
+void fft(vector<cd> &a, bool inv){
+    int n = a.size();
+    int m{};
+    while((1<<m) < n)
+        m++;
+    for(int k{}; k < a.size(); ++k){
+        if(k < reverseBit(k, m))
+            swap(a[k], a[reverseBit(k, m)]);
+    }
+
+    for(int len = 2; len <= a.size(); len <<= 1){
+        double ang = 2*PI/len*(inv?-1:1);
+        cd wlen(cos(ang), sin(ang));
+        for(int i{}; i < n; i += len){
+            cd w(1);
+            for(int j{}; j < len/2; ++j){
+                cd u = a[i+j], v = a[i+j+len/2]*w;
+                a[i+j] = u+v;
+                a[i+j+len/2] = u-v;
+                w *= wlen;
+            }
+        }
+    }
+    if(inv){
+        for(cd&x:a)
+            x /= n;
+    }
+}
+
+vector<int> mult(vector<int> &v1, vector<int> &v2){
+    int n = 1;
+    while(n < v1.size() + v2.size())
+        n <<= 1;
+    vector<cd> a(v1.begin(), v1.end());
+    vector<cd> b(v2.begin(), v2.end());
+
+    a.resize(n), b.resize(n);
+    fft(a, false);
+    fft(b, false);
+    for(int i{}; i < n; ++i)
+        a[i]*=b[i];
+    fft(a, true);
+    vector<int> res(n);
+    for(int i{}; i < n; ++i)
+        res[i] = round(a[i].real());
+    return res;
+}

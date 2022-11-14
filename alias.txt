@@ -10,3 +10,6 @@ pyramid C:/Users/jerry/bin/pyramid.txt
 determinant C:/Users/jerry/bin/determinant.txt
 factor C:/Users/jerry/bin/factor.txt
 hash C:/Users/jerry/bin/hash.txt
+fft C:/Users/jerry/bin/fft.txt
+polyfft C:/Users/jerry/bin/polyfft.txt
+chull C:/Users/jerry/bin/chull.txt
