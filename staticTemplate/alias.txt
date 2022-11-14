@@ -1,0 +1,15 @@
+gcd C:/Users/jerry/bin/staticTemplate/gcd.txt
+lcm C:/Users/jerry/bin/staticTemplate/lcm.txt
+dfs C:/Users/jerry/bin/staticTemplate/dfs.txt
+bfs C:/Users/jerry/bin/staticTemplate/bfs.txt
+modinv C:/Users/jerry/bin/staticTemplate/modinv.txt
+geo C:/Users/jerry/bin/staticTemplate/geo.txt
+choose C:/Users/jerry/bin/staticTemplate/choose.txt
+pascal C:/Users/jerry/bin/staticTemplate/pascal.txt
+pyramid C:/Users/jerry/bin/staticTemplate/pyramid.txt
+determinant C:/Users/jerry/bin/staticTemplate/determinant.txt
+factor C:/Users/jerry/bin/staticTemplate/factor.txt
+hash C:/Users/jerry/bin/staticTemplate/hash.txt
+fft C:/Users/jerry/bin/staticTemplate/fft.txt
+polyfft C:/Users/jerry/bin/staticTemplate/polyfft.txt
+chull C:/Users/jerry/bin/staticTemplate/chull.txt

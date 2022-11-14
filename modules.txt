@@ -1,0 +1,2 @@
+temp ./dynamicTemplate/temp.py
+add ./staticTemplate/add.py
