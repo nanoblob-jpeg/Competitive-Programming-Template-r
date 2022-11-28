@@ -1,0 +1,19 @@
+vector<int> tour;
+void euler(int v, vector<multiset<int>> &adj){
+    // if directed, reverse after running function
+    // and remove deleting the second edge
+    stack<int> st;
+    st.push(v);
+    while(!st.empty()){
+        int t = st.top();
+        if(adj[t].empty()){
+            tour.push_back(t);
+            st.pop();
+        }else{
+            int u = *adj[t].begin();
+            adj[t].erase(adj[t].begin());
+            adj[u].erase(adj[u].find(t));
+            st.push(u);
+        }
+    }
+}

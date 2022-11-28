@@ -13,3 +13,7 @@ hash C:/Users/jerry/bin/staticTemplate/hash.txt
 fft C:/Users/jerry/bin/staticTemplate/fft.txt
 polyfft C:/Users/jerry/bin/staticTemplate/polyfft.txt
 chull C:/Users/jerry/bin/staticTemplate/chull.txt
+suffixarray C:/Users/jerry/bin/staticTemplate/suffixarray.txt
+kuhn C:/Users/jerry/bin/staticTemplate/kuhn.txt
+euler C:/Users/jerry/bin/staticTemplate/euler.txt
+tarjan C:/Users/jerry/bin/staticTemplate/tarjan.txt

@@ -15,6 +15,9 @@ def call(filename, templates):
 	while lines[index].strip() != '//! function insert':
 		index += 1
 	for name in templates:
+		if name == "list":
+			print(*[n for n in sorted(functions.keys())], sep = '\n')
+			continue
 		if name not in functions:
 			continue
 		toWriteFile = open(functions[name], "r")

@@ -1,0 +1,58 @@
+int kuhn(vector<int> &out, vector<vector<int>> &adj){
+    // 0 indexed
+    // adjacency list from one side of bipartite to the other, not both ways
+    // matching stored in out
+    // returns number of matched
+    for(int j{}; j < out.size(); ++j)
+        out[j] = -1;
+    vector<bool> used(adj.size());
+    auto helper = [&](int v, auto helper) -> bool{
+        if(used[v])
+            return false;
+        used[v] = true;
+        for(int to : adj[v]){
+            if(out[to] == -1 || helper(out[to], helper)){
+                out[to] = v;
+                return true;
+            }
+        }
+        return false;
+    };
+
+    int num{};
+    for(int i{}; i < adj.size(); ++i){
+        for(int j{}; j < adj.size(); ++j)
+            used[j] = 0;
+        num += helper(i, helper);
+    }
+    return num;
+}
+
+int kuhn(map<int, int> &out, vector<vector<int>> &adj){
+    // 0 indexed
+    // adjacency list from one side of bipartite to the other, not both ways
+    // matching stored in out
+    // returns number of matched
+    out.clear();
+    vector<bool> used(adj.size());
+    auto helper = [&](int v, auto helper) -> bool{
+        if(used[v])
+            return false;
+        used[v] = true;
+        for(int to : adj[v]){
+            if(!out.count(to) || helper(out[to], helper)){
+                out[to] = v;
+                return true;
+            }
+        }
+        return false;
+    };
+
+    int num{};
+    for(int i{}; i < adj.size(); ++i){
+        for(int j{}; j < adj.size(); ++j)
+            used[j] = 0;
+        num += helper(i, helper);
+    }
+    return num;
+}

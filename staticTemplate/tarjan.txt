@@ -1,0 +1,37 @@
+bool tar_visits[300001];
+bool tar_onpath[300001];
+int comp[300001];
+int tar_enter[300001];
+int tar_smallest[300001];
+stack<int> tar_st;
+int tar_ti{};
+int compnum{};
+
+int tarjan(int v, vector<vector<int>> &adj){
+    tar_onpath[v] = true;
+    tar_visits[v] = true;
+    tar_enter[v] = tar_ti++;
+    tar_smallest[v] = tar_enter[v];
+    tar_st.push(v);
+    for(int i : adj[v]){
+        if(tar_visits[i] && !tar_onpath[i])
+            continue;
+        if(!tar_visits[i]){
+            tar_smallest[v] = min(tar_smallest[v], tarjan(i, adj));
+        }else{
+            tar_smallest[v] = min(tar_smallest[v], tar_smallest[i]);
+        }
+    }
+    if(tar_enter[v] == tar_smallest[v]){
+        while(tar_st.top() != v){
+            comp[tar_st.top()] = compnum;
+            tar_onpath[tar_st.top()] = false;
+            tar_st.pop();
+        }
+        comp[v] = compnum;
+        tar_onpath[v] = false;
+        tar_st.pop();
+        compnum++;
+    }
+    return tar_smallest[v];
+}
