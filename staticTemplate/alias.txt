@@ -17,3 +17,5 @@ suffixarray C:/Users/jerry/bin/staticTemplate/suffixarray.txt
 kuhn C:/Users/jerry/bin/staticTemplate/kuhn.txt
 euler C:/Users/jerry/bin/staticTemplate/euler.txt
 tarjan C:/Users/jerry/bin/staticTemplate/tarjan.txt
+suffixsort C:/Users/jerry/bin/staticTemplate/suffixsort.txt
+avltree C:/Users/jerry/bin/staticTemplate/avltree.txt

@@ -1,0 +1,143 @@
+vector<int> suff[24];
+vector<int> sort_cyclic_shifts(string const& s) {
+    int n = s.size();
+    const int alphabet = 256;
+    // for first iteration, count the letters and trivially make the c and p arrays
+    vector<int> p(n), c(n), cnt(max(alphabet, n), 0);
+    // counting sort here
+    for (int i = 0; i < n; i++)
+        cnt[s[i]]++;
+    for (int i = 1; i < alphabet; i++)
+        cnt[i] += cnt[i-1];
+    for (int i = 0; i < n; i++){
+        p[--cnt[s[i]]] = i;
+    }
+    c[p[0]] = 0;
+    int classes = 1;
+    for (int i = 1; i < n; i++) {
+        if (s[p[i]] != s[p[i-1]])
+            classes++;
+        c[p[i]] = classes - 1;
+    }
+    suff[0] = c;
+    vector<int> pn(n), cn(n);
+    int ind = 1;
+    for (int h = 0; (1 << h) < n; ++h) {
+        //pn is first element in pair
+        //cn is temporary for c
+        for (int i = 0; i < n; i++) {
+            pn[i] = p[i] - (1 << h);
+            if (pn[i] < 0)
+                pn[i] += n;
+        }
+        fill(cnt.begin(), cnt.begin() + classes, 0);
+        for (int i = 0; i < n; i++)
+            cnt[c[pn[i]]]++;
+        for (int i = 1; i < classes; i++)
+            cnt[i] += cnt[i-1];
+        for (int i = n-1; i >= 0; i--)
+            p[--cnt[c[pn[i]]]] = pn[i];
+        cn[p[0]] = 0;
+        classes = 1;
+        for (int i = 1; i < n; i++) {
+            pair<int, int> cur = {c[p[i]], c[(p[i] + (1 << h)) % n]};
+            pair<int, int> prev = {c[p[i-1]], c[(p[i-1] + (1 << h)) % n]};
+            if (cur != prev)
+                ++classes;
+            cn[p[i]] = classes - 1;
+        }
+        c.swap(cn);
+        suff[ind++] = c;
+    }
+    return p;
+}
+vector<int> suffix_array_construction(string &s) {
+    s += "$";
+    vector<int> sorted_shifts = sort_cyclic_shifts(s);
+    // to remove substring of only ‘$’
+    s.pop_back();
+    sorted_shifts.erase(sorted_shifts.begin());
+    return sorted_shifts;
+}
+int powtwo[100005];
+int n;
+int lcp(int x, int y){
+    if(x == y)
+        return n-x;
+    int k = min(powtwo[n-x], powtwo[n-y]);
+    int ret{};
+    for(; k >= 0 && x < suff[k].size() && y < suff[k].size(); --k){
+        // cout << k << ' ' << x << ' ' << y << '\n';
+        if(suff[k][x] == suff[k][y]){
+            x = (x+(1<<k));
+            y = (y+(1<<k));
+            ret += 1<<k;
+        }
+    }
+    return ret;
+}
+string s;
+int sparse[22][100001];
+int maps[100001];
+class comp{
+public:
+    bool operator()(const ar<uci, 2> &a, const ar<uci, 2> &b){
+        // cout << a[0] << ' ' << a[1] << ' ' << b[0] << ' ' << b[1] << '\n';
+        if(maps[a[0]] == maps[b[0]]){
+            // cout << "exit early: " << (a[1] < b[1]) << '\n';
+            return a[1] < b[1];
+        }
+        int dist = abs(maps[b[0]]-maps[a[0]]);
+        int log = powtwo[dist];
+        int small;
+        // cout << log << ' ' << dist << ' ' << maps[a[0]] << ' ' << maps[b[0]] << '\n';
+        if(maps[a[0]] <= maps[b[0]])
+            small = min(sparse[log][maps[a[0]]], sparse[log][maps[b[0]]-(1<<log)]);
+        else{
+            small = min(sparse[log][maps[b[0]]], sparse[log][maps[a[0]]-(1<<log)]);
+        }
+        // cout << small << '\n';
+        if(small >= a[1] && small >= b[1]){
+            // cout << (a[1] < b[1]) << '\n';
+            return a[1] < b[1];
+        }else if(small >= a[1]){
+            // cout << 1 << '\n';
+            return true;
+        }
+        else if(small >= b[1]){
+            // cout << 0 << '\n';
+            return false;
+        }else{
+            // cout << (s[a[0] + small] < s[b[0] + small]) << '\n';
+            return s[a[0] + small] < s[b[0] + small];
+        }
+    }
+};
+
+/*
+set up inside function as below
+*/
+powtwo[1] = 0;
+for(int i{2}; i <= 100000; ++i){
+    powtwo[i] = powtwo[i/2] + 1;
+}
+
+n = s.size();
+vector<int> ss = suffix_array_construction(s);
+for(int i{}; i < ss.size(); ++i){
+    maps[ss[i]] = i;
+}
+vector<int> a(ss.size()-1);
+
+for(int i{}; i < a.size(); ++i){
+    a[i] = lcp(ss[i], ss[i+1]);
+}
+int m = a.size();
+for(int i{}; i < m; ++i){
+    sparse[0][i] = a[i];
+}
+for(int i{1}; i <= powtwo[m]; ++i){
+    for(int j{}; j + (1<<i) <= m; ++j){
+        sparse[i][j] = min(sparse[i-1][j], sparse[i-1][j+(1<<(i-1))]);
+    }
+}

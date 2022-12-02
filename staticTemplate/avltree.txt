@@ -1,0 +1,352 @@
+struct node{
+    int rank{};
+    int val{};
+    int sum{};
+    int height{};
+    int diff{};
+    int size{};
+    node *left, *right;
+    node(int v = 0, node *le = nullptr, node *ri = nullptr){
+        val = v;
+        left = le;
+        right = ri;
+    }
+};
+class avltree{
+private:
+    node *root = nullptr;
+    int tsize = 0;
+
+    void updateheight(node *r){
+        if(!r)
+            return;
+        r->height = max(r->left ? r->left->height + 1 : 0, r->right ? r->right->height+1 : 0);
+        r->diff = (r->left ? r->left->height : -1) - (r->right ? r->right->height : -1);
+        r->sum = (r->left ? r->left->sum : 0) + (r->right ? r->right->sum : 0) + r->val;
+        r->size = (r->left ? r->left->size : 0) + (r->right ? r->right->size : 0) + 1;
+        r->rank = (r->left ? r->left->size : 0);
+    }
+
+    void lrotate(node *r, node *p, bool left){
+        if(p == nullptr){
+            root = r->right;
+            r->right = root->left;
+            root->left = r;
+            updateheight(r);
+            updateheight(root);
+        }else{
+            node *t = r->right;
+            r->right = t->left;
+            t->left = r;
+            if(left){
+                p->left = t;
+            }else{
+                p->right = t;
+            }
+            updateheight(r);
+            updateheight(t);
+            updateheight(p);
+        }
+    }
+
+    void rrotate(node *r, node *p, bool left){
+        if(p == nullptr){
+            root = r->left;
+            r->left = root->right;
+            root->right = r;
+            updateheight(r);
+            updateheight(root);
+        }else{
+            node *t = r->left;
+            r->left = t->right;
+            t->right = r;
+            if(left){
+                p->left = t;
+            }else{
+                p->right = t;
+            }
+            updateheight(r);
+            updateheight(t);
+            updateheight(p);
+        }
+    }
+
+    void balance(node *r, node *parent, bool left){
+        if(!r) return;
+        updateheight(r);
+        if(r->diff == 2){
+            if(r->left && r->left->diff == -1){
+                lrotate(r->left, r, true);
+            }
+            rrotate(r, parent, left);
+        }else if(r->diff == -2){
+            if(r->right && r->right->diff == 1){
+                rrotate(r->right, r, false);
+            }
+            lrotate(r, parent, left);
+        }
+    }
+
+    void insert_rank(node *r, node *parent, bool left, int v, int ra){
+        // this may and probably will break ordering of elements in the tree
+        if(r == nullptr && parent == nullptr){
+            root = new node(v);
+            updateheight(root);
+            tsize++;
+            return;
+        }
+        if(r->rank >= ra){
+            if(!r->left){
+                r->left = new node(v);
+                updateheight(r->left);
+                tsize++;
+            }else{
+                insert_rank(r->left, r, true, v, ra);
+            }
+        }else if(r->rank < ra){
+            if(!r->right){
+                r->right = new node(v);
+                updateheight(r->right);
+                tsize++;
+            }else{
+                insert_rank(r->right, r, false, v, ra-r->rank - 1);
+            }
+        }
+        balance(r, parent, left);
+    }
+    void insert(node *r, node *parent, bool left, int v){
+        // this may and probably will break ordering of elements in the tree
+        if(r == nullptr && parent == nullptr){
+            root = new node(v);
+            updateheight(root);
+            tsize++;
+            return;
+        }
+        if(r->val > v){
+            if(!r->left){
+                r->left = new node(v);
+                updateheight(r->left);
+                tsize++;
+            }else{
+                insert(r->left, r, true, v);
+            }
+        }else if(r->val < v){
+            if(!r->right){
+                r->right = new node(v);
+                updateheight(r->right);
+                tsize++;
+            }else{
+                insert(r->right, r, false, v);
+            }
+        }else{
+            return;
+        }
+        balance(r, parent, left);
+    }
+    node* get_remove_next(node *r, node *parent, bool left){
+        if(!r->left){
+            if(parent->right != r){
+                parent->left = r->right;
+            }
+            return r;
+        }
+        node *t = get_remove_next(r->left, r, true);
+        balance(r, parent, left);
+        return t;
+    }
+    void erase_rank(node *r, node *parent, bool left, int ra){
+        if(!r)
+            return;
+        if(r->rank == ra){
+            if(parent == nullptr){
+                if(!r->right && !r->left){
+                    root = nullptr;
+                }else if(!r->right){
+                    root = r->left;
+                }else if(!r->left){
+                    root = r->right;
+                }else{
+                    node *t = get_remove_next(r->right, r, false);
+                    t->left = r->left;
+                    if(r->right != t)
+                        t->right = r->right;
+                    root = t;
+                }
+                balance(root, parent, left);
+            }else if(left){
+                if(!r->right && !r->left){
+                    parent->left = nullptr;
+                }else if(!r->right){
+                    parent->left = r->left;
+                }else if(!r->left){
+                    parent->left = r->right;
+                }else{
+                    node *t = get_remove_next(r->right, r, false);
+                    t->left = r->left;
+                    if(r->right != t)
+                        t->right = r->right;
+                    parent->left = t;
+                }
+                balance(parent->left, parent, left);
+            }else{
+                if(!r->right && !r->left){
+                    parent->right = nullptr;
+                }else if(!r->right){
+                    parent->right = r->left;
+                }else if(!r->left){
+                    parent->right = r->right;
+                }else{
+                    node *t = get_remove_next(r->right, r, false);
+                    t->left = r->left;
+                    if(r->right != t)
+                        t->right = r->right;
+                    parent->right = t;
+                }
+                balance(parent->right, parent, left);
+            }
+            delete r;
+            tsize--;
+            return;
+        }else if(r->rank < ra){
+            erase_rank(r->right, r, false, ra-r->rank-1);
+            balance(r, parent, left);
+        }else{
+            erase_rank(r->left, r, true, ra);
+            balance(r, parent, left);
+        }
+    }
+    void erase(node *r, node *parent, bool left, int v){
+        if(!r)
+            return;
+        if(r->val == v){
+            if(parent == nullptr){
+                if(!r->right && !r->left){
+                    root = nullptr;
+                }else if(!r->right){
+                    root = r->left;
+                }else if(!r->left){
+                    root = r->right;
+                }else{
+                    node *t = get_remove_next(r->right, r, false);
+                    t->left = r->left;
+                    if(r->right != t)
+                        t->right = r->right;
+                    root = t;
+                }
+                balance(root, parent, left);
+            }else if(left){
+                if(!r->right && !r->left){
+                    parent->left = nullptr;
+                }else if(!r->right){
+                    parent->left = r->left;
+                }else if(!r->left){
+                    parent->left = r->right;
+                }else{
+                    node *t = get_remove_next(r->right, r, false);
+                    t->left = r->left;
+                    if(r->right != t)
+                        t->right = r->right;
+                    parent->left = t;
+                }
+                balance(parent->left, parent, left);
+            }else{
+                if(!r->right && !r->left){
+                    parent->right = nullptr;
+                }else if(!r->right){
+                    parent->right = r->left;
+                }else if(!r->left){
+                    parent->right = r->right;
+                }else{
+                    node *t = get_remove_next(r->right, r, false);
+                    t->left = r->left;
+                    if(r->right != t)
+                        t->right = r->right;
+                    parent->right = t;
+                }
+                balance(parent->right, parent, left);
+            }
+            delete r;
+            tsize--;
+            return;
+        }else if(r->val < v){
+            erase(r->right, r, false, v);
+            balance(r, parent, left);
+        }else{
+            erase(r->left, r, true, v);
+            balance(r, parent, left);
+        }
+    }
+    bool count(int va, node *r){
+        if(!r)
+            return false;
+        if(va == r->val)
+            return true;
+        if(va < r->val)
+            return count(va, r->left);
+        return count(va, r->right);
+    }
+    void print(node *r){
+        if(!r)
+            return;
+        cout << "At vertex: " << r->val << '\n';
+        cout << "Rank: " << r->rank << '\n';
+        cout << "Sum: " << r->sum << '\n';
+        cout << "Height: " << r->height << '\n';
+        cout << "Diff: " << r->diff << '\n';
+        cout << "Size: " << r->size << '\n';
+        cout << "Left Child: " << (r->left ? r->left->val : -1) << '\n';
+        cout << "Right Child: " << (r->right ? r->right->val : -1) << '\n';
+        print(r->left);
+        print(r->right);
+    }
+
+    int query(node *n, int lq, int rq, int rank){
+        if(!n)
+            return 0;
+        int l = rank;
+        int r = rank+(n->size-1);
+        if(l > r || lq > r || rq < l){
+            return 0;
+        }else if(lq <= l && r <= rq){
+            return n->sum;
+        }else{
+            int out{};
+            if(lq <= rank+n->rank && rank+n->rank <= rq){
+                out += n->val;
+            }
+            out += query(n->left, lq, rq, rank);
+            out += query(n->right, lq, rq, rank+n->rank+1);
+            return out;
+        }
+    }
+    int get_rank(node *r, int ra){
+        if(!r)
+            return 0;
+        if(r->rank == ra)
+            return r->val;
+        if(r->rank < ra){
+            return get_rank(r->right, ra-r->rank-1);
+        }
+        return get_rank(r->left, ra);
+    }
+public:
+    avltree(){}
+    bool count(int va){return count(va, root);}
+    void insert_rank(int v, int ra){
+        // this may and probably will break ordering of elements in the tree
+        insert_rank(root, nullptr, false, v, ra);
+    }
+    void insert(int v){insert(root, nullptr, false, v);}
+    void erase_rank(int ra){erase_rank(root, nullptr, false, ra);}
+    void erase(int v){erase(root, nullptr, false, v);};
+    void print(){print(root);}
+    int size(){return tsize;}
+    int query(int l, int r){
+        if(l > r)
+            return 0;
+        // queries based off of rank
+        return query(root, l, r, 0);
+    }
+    int get_rank(int ra){return get_rank(root, ra);}
+    // ranks are 0 indexed
+};
