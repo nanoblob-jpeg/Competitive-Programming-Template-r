@@ -1,0 +1,20 @@
+type.conf
+    This file should only be 1 line long
+    The first line, should be the name of this group of templates. This is NOT needed in every directory.
+
+parser.conf
+    each new type is started by a line with only //!
+    scheme is defined below, note it is all one tabbed to the right
+    also, arguments can be in any order and can appear multiple times
+
+    //!
+    main name, [one singular main name]
+    alias, put, other, aliases, here , separated, by, commas
+    list all, what to disply for listing all, separated by commas
+    list some, what to disply for listing some, separated by commas
+    list least, what to display for listing least
+
+
+Hierarchy for listing:
+    main name -> aliases -> all -> some -> least
+    When listing what templates exist the script will search up this hierarchy until it finds a config that exists.

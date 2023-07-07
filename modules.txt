@@ -1,2 +1,2 @@
-temp ./dynamicTemplate/temp.py
-add ./staticTemplate/add.py
+temp $BASEPATH/dynamicTemplate/temp.py
+add $BASEPATH/staticTemplate/add.py
