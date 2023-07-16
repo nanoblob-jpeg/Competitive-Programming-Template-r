@@ -17,19 +17,7 @@ seed_seq seq{
 };
 mt19937 rng(seq);
 // mt19937_64 lrng(seq);
-// struct custom_hash {
-//     static uint64_t splitmix64(uint64_t x) {
-//         // http://xorshift.di.unimi.it/splitmix64.c
-//         x += 0x9e3779b97f4a7c15;
-//         x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-//         x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-//         return x ^ (x >> 31);
-//     }
-//     size_t operator()(uint64_t x) const {
-//         static const uint64_t FIXED_RANDOM = lrng();
-//         return splitmix64(x + FIXED_RANDOM);
-//     }
-// };
+
 struct debugger{
     template <typename T>
     debugger& operator<<(T &a){
@@ -88,3 +76,16 @@ uci main() {
     uniform_int_distribution<int> thing(a, b);
     num = thing(rng);
 */
+// struct custom_hash {
+//     static uint64_t splitmix64(uint64_t x) {
+//         // http://xorshift.di.unimi.it/splitmix64.c
+//         x += 0x9e3779b97f4a7c15;
+//         x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+//         x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+//         return x ^ (x >> 31);
+//     }
+//     size_t operator()(uint64_t x) const {
+//         static const uint64_t FIXED_RANDOM = lrng();
+//         return splitmix64(x + FIXED_RANDOM);
+//     }
+// };
