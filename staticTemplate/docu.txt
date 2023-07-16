@@ -13,8 +13,28 @@ parser.conf
     list all, what to disply for listing all, separated by commas
     list some, what to disply for listing some, separated by commas
     list least, what to display for listing least
+    description, description without commas
+
+    reserved type names
+        parser path
+        types
 
 
 Hierarchy for listing:
-    main name -> aliases -> all -> some -> least
+    main name(default) -> alias -> all -> some -> least
     When listing what templates exist the script will search up this hierarchy until it finds a config that exists.
+    for some and all, default will be printed if it is a property
+
+    add list all
+    add list alias
+
+Can also list types:
+    add list types
+        will display the hierarchy of types that exist
+
+    add list types name subname ... subsub..subname
+        will display the hierarchy starting from that type name
+
+notes:
+    underscores replaced by spaces in argument list
+    for listing, names will be converted to all uppercase

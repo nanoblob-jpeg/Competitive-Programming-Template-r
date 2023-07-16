@@ -59,7 +59,8 @@ for p in parser_confs:
                     temp_struct = {}
                     continue
                 configs.write("//!\n")
-                configs.write("types " + gettype(p) + "\n")
+                configs.write(str(p.parent/'parser.py')+"\n")
+                configs.write("types," + gettype(p) + "\n")
                 for x, y in temp_struct.items():
                     configs.write(x + "," + ','.join(y) + '\n')
             temp_struct = {}
@@ -90,7 +91,8 @@ for p in parser_confs:
             temp_struct = {}
             continue
         configs.write("//!\n")
-        configs.write("types " + gettype(p) + "\n")
+        configs.write(str(p.parent/'parser.py')+"\n")
+        configs.write("types," + gettype(p) + "\n")
         for x, y in temp_struct.items():
             configs.write(x + "," + ','.join(y) + '\n')
 
