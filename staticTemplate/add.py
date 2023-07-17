@@ -127,7 +127,7 @@ def call(filename, args):
                     print("hierarchy path not found")
                     exit()
                 hierarchy = hierarchy[args[i]]
-            list_recurse(hierarchy, args[1], 0)
+            list_recurse(hierarchy, args[1] if args[1] == 'alias' else 'list ' + args[1], 0)
     else:
         if args[0] not in name_to_path:
             print('template not found')
