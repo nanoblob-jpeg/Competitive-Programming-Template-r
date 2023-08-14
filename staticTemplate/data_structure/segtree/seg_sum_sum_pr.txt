@@ -1,0 +1,35 @@
+#include <vector>
+#include <array>
+using segtree = std::vector<int>;
+void update(int v, int val, int l, int r, int p, segtree &seg){
+	if(l > r || p > r || p < l)
+		return;
+	else if(l == r && l == p){
+		seg[v] += val;
+	}else{
+		if(l == r)
+			return;
+		int mid = l + (r-l)/2;
+		update(v*2, val, l, mid, p, seg);
+		update(v*2+1, val, mid+1, r, p, seg);
+		seg[v] = seg[v*2]+seg[v*2+1];
+	}
+}
+
+int query(int v, int l, int r, int lq, int rq, segtree &seg){
+	if(l > r || lq > r || rq < l)
+		return 0;
+	else if(lq <= l && r <= rq)
+		return seg[v];
+	else{
+		int mid = l + (r-l)/2;
+		return query(v*2, l, mid, lq, rq, seg)+query(v*2+1, mid+1, r, lq, rq, seg);
+	}
+}
+
+void build(segtree &seg, std::vector<int> &a){
+	seg = segtree(a.size()*4);
+	for(int i{}; i < a.size(); ++i){
+		update(1, a[i], 0, a.size()-1, i, seg);
+	}
+}

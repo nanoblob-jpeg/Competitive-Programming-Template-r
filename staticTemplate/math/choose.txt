@@ -1,9 +1,8 @@
-const long long MAXCHOOSEN=500;
+const long long MAXCHOOSEN=200000;
 const long long MODCHOOSE=1000000007;
 
 long long fact[MAXCHOOSEN+1];
 long long inv[MAXCHOOSEN+1];
-long long choose[MAXCHOOSEN+1][MAXCHOOSEN+1];
 long long fastexp(long long b, long long exp){
 	if(exp == 0)
 		return 1;
@@ -26,27 +25,16 @@ void chooseinit(){
 		fact[i] = (fact[i-1]*i)%MODCHOOSE;
 		inv[i] = fastexp(fact[i], MODCHOOSE-2);
 	}
-	for(int i{}; i <=MAXCHOOSEN;++i){
-		for(int j{}; j <=i; ++j){
-			choose[i][j] = ((fact[i]*inv[j])%MODCHOOSE * inv[i-j])%MODCHOOSE;
-		}
-	}
 }
 
 long long nchoosek(long long n, long long k){
 	if(n == k)
 		return 1;
-	long long t = n-k;
-	long long invij, invj;
-	long long facts=1;
-	if(k == 0)
-		invj=1;
-	for(int i{1}; i <= n; ++i){
-		facts*=i;
-		if(i == k)
-			invj = fastexp(facts, MODCHOOSE-2);
-		if(i == t)
-			invij = fastexp(facts, MODCHOOSE-2);
-	}
-	return ((facts*invj)%MODCHOOSE*invij)%MODCHOOSE;
+    if(k > n)
+        return 0;
+    if(k < 0)
+        return 0;
+    if(k == 0)
+        return 1;
+	return ((fact[n]*inv[k])%MODCHOOSE*inv[n-k])%MODCHOOSE;
 }

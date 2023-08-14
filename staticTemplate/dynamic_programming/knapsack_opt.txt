@@ -1,0 +1,33 @@
+#define ll long long
+#include <vector>
+
+void opt(std::vector<ll> &weights){
+    while(true){
+        std::vector<int> cond;
+        bool good = false;
+        std::sort(weights.begin(), weights.end());
+        for(int i{}; i < weights.size();){
+            int j = i+1;
+            while(j < weights.size() && weights[j] == weights[i])
+                j++;
+            if(j-i <= 2){
+                for(int k = i; k < j; ++k)
+                    cond.push_back(weights[k]);
+            }else{
+                int use = 1;
+                int amt = j-i;
+                while(amt){
+                    int take = min(amt, use);
+                    cond.push_back(take*weights[i]);
+                    use *= 2;
+                    amt -= take;
+                    good = true;
+                }
+            }
+            i = j;
+        }
+        weights.swap(cond);
+        if(!good)
+            break;
+    }
+}
