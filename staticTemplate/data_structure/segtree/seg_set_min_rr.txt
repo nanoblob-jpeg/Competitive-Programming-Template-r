@@ -34,7 +34,7 @@ int query(int v, int l, int r, int lq, int rq, segtree &seg){
 			seg[v][1] = inff;
 			seg[v][0] = min(seg[v*2][0], seg[v*2+1][0]);
 		}
-		return query(v*2, l, mid, lq, rq, seg)+query(v*2+1, mid+1, r, lq, rq, seg);
+		return min(query(v*2, l, mid, lq, rq, seg), query(v*2+1, mid+1, r, lq, rq, seg));
 	}
 }
 

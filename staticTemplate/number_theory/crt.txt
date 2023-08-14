@@ -1,0 +1,60 @@
+#define ll long long
+#include <vector>
+#include <utility>
+ll gcd(ll a, ll b){
+    if(b == 0)
+        return a;
+    return gcd(b, a%b);
+}
+
+ll extgcd(ll a, ll b, ll &x, ll &y){
+    if(b == 0){
+        x = 1, y = 0;
+        return a;
+    }
+    ll x1, y1;
+    ll g = extgcd(b, a%b, x1, y1);
+    x = y1;
+    y = x1 - y1*(a/b);
+    return g;
+}
+
+/** Works for non-coprime moduli.
+ Returns {-1,-1} if solution does not exist or input is invalid.
+ Otherwise, returns {x,L}, where x is the solution unique to mod L
+
+https://forthright48.com/chinese-remainder-theorem-part-2-non-coprime-moduli/
+*/
+std::pair<ll, ll> crt(std::vector<ll> &A, std::vector<ll> &M ) {
+    if(A.size() != M.size()) return {-1,-1}; /** Invalid input*/
+ 
+    ll n = A.size();
+ 
+    ll a1 = A[0];
+    ll m1 = M[0];
+    /** Initially x = a_0 (mod m_0)*/
+ 
+    /** Merge the solution with remaining equations */
+    for ( ll i = 1; i < n; i++ ) {
+        ll a2 = A[i];
+        ll m2 = M[i];
+ 
+        ll g = gcd(m1, m2);
+        if ( a1 % g != a2 % g ) return {-1,-1}; /** No solution exists*/
+ 
+        /** Merge the two equations*/
+        ll p, q;
+        extgcd(m1/g, m2/g, &p, &q);
+ 
+        ll mod = m1 / g * m2; /** LCM of m1 and m2*/
+ 
+        /** We need to be careful about overflow, but I did not bother about overflow here to keep the code simple.*/
+        ll x = ((a1*((m2/g)*q)%mod)%mod + (a2*((m1/g)*p)%mod)%mod ) % mod;
+ 
+        /** Merged equation*/
+        a1 = x;
+        if (a1 < 0) a1 += mod; /** Result is not suppose to be negative*/
+        m1 = mod;
+    }
+    return {a1, m1};
+}

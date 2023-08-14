@@ -24,7 +24,7 @@ int query(int v, int l, int r, int lq, int rq, segtree &seg){
 		return seg[v];
 	else{
 		int mid = l + (r-l)/2;
-		return query(v*2, l, mid, lq, rq, seg)+query(v*2+1, mid+1, r, lq, rq, seg);
+		return min(query(v*2, l, mid, lq, rq, seg), query(v*2+1, mid+1, r, lq, rq, seg));
 	}
 }
 
