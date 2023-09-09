@@ -100,7 +100,7 @@ def build_hierarchy():
     return hierarchy, name_to_path, alias_to_main
 
 def list_recurse(hierarchy, tt, indent):
-    if tt != 'types':
+    if tt != 'list types':
         if 'configs' in hierarchy:
             for i in hierarchy['configs']:
                 print('  '*indent + (i[tt] if type(i[tt]) is str else ','.join(i[tt])))
