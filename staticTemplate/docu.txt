@@ -38,3 +38,6 @@ Can also list types:
 notes:
     underscores replaced by spaces in argument list
     for listing, names will be converted to all uppercase
+
+conventions for calling the tool:
+when adding default inside of anywhere, at least for data structures, will put the templated class version

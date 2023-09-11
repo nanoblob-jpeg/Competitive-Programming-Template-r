@@ -1,0 +1,49 @@
+#include <vector>
+
+template <typename T>
+class bit{
+public:
+    std::vector<T> tree;
+    int si;
+    bit(int n): tree(n){si = n;}
+    bit(std::vector<T> &a): tree(a.size()){
+        si = a.size();
+        for(int i{}; i < a.size(); ++i){
+            update(i, a[i]);
+        }
+    }
+    T add(T a, T b){
+        return a+b;
+    }
+    T sub(T a, T b){
+        return add(a, -b);
+    }
+
+    void update(int ind, int val){
+        ind++;
+        while(ind <= si){
+            tree[ind-1] = add(tree[ind-1], val);
+            ind += ind&-ind;
+        }
+    }
+
+    T query(int ind){
+        T sum = 0;
+        if(ind < 0 || ind >= si)
+            throw 6471;
+        ind++;
+        while(ind >= 1){
+            sum = add(sum, tree[ind-1]);
+            ind -= ind&-ind;
+        }
+        return sum;
+    }
+
+    T query(int start, int end){
+        T sum = query(end);
+        if(start != 0){
+            sum = sub(sum, query(start-1));
+        }
+        return sum;
+    }
+};
