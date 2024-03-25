@@ -17,8 +17,8 @@ void build(std::vector<int> &a){
     for(int i{}; i < n; ++i)
         sparse[0][i] = a[i];
 
-    for(int j{1}; j <= pows[2*n]; ++j){
-        for(int i{}; i <= 2*n-(1<<j); ++i){
+    for(int j{1}; j <= pows[n]; ++j){
+        for(int i{}; i <= n-(1<<j); ++i){
             sparse[j][i] = func(sparse[j-1][i], sparse[j-1][i+(1<<(j-1))]);
         }
     }

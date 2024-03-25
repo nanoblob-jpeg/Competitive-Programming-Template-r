@@ -1,0 +1,69 @@
+struct BCTree{
+    // indexed by vertex number
+    int num;
+    vector<int> cnum;
+    vector<int> low;
+    vector<int> enter;
+    vector<bool> isArt;
+
+    // indexed by comp number
+    int compnum;
+    vector<vector<int>> adj;
+    vector<vector<int>> lift;
+    vector<vector<int>> comps;
+    vector<int> st;
+
+    BCTree(vector<vector<int>> a): adj(1){
+        int n = a.size();
+        enter.resize(n);
+        low.resize(n);
+        cnum.resize(n);
+        isArt.resize(n);
+        num = 1;
+        dfs(0, -1, a);
+
+        compnum = 0;
+        for(int i{}; i < n; ++i)
+            if(isArt[i]){
+                si.push_back(1);
+                cnum[i] = compnum++;
+                adj.push_back({});
+            }
+
+        for(auto &comp : comps){
+            int node = compnum++;
+            adj.push_back({});
+            for(int u : comp){
+                if(!isArt[u]){
+                    cnum[u] = node;
+                }else{
+                    adj[node].push_back(cnum[u]);
+                    adj[cnum[u]].push_back(node);
+                }
+            }
+        }
+    }
+
+    void dfs(int v, int p, vector<vector<int>> &a){
+        enter[v] = low[v] = num++;
+        st.push_back(v);
+        for(int u : a[v]){
+            if(u == p)
+                continue;
+            if(enter[u]){
+                low[v] = min(low[v], enter[u]);
+            }else{
+                dfs(u, v, a);
+                low[v] = min(low[v], low[u]);
+                if(low[u] >= enter[v]){
+                    isArt[v] = enter[v] > 1 || enter[u] > 2;
+                    comps.push_back({v});
+                    while(comps.back().back() != u){
+                        comps.back().push_back(st.back());
+                        st.pop_back();
+                    }
+                }
+            }
+        }
+    }
+};

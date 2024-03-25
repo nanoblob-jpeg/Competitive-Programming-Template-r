@@ -42,16 +42,10 @@ class file_writer():
 def parse_configs(filename):
     f = open(filename, 'r')
     ret = []
-    name_order = ['main name', 'alias', 'list all', 'list some', 'list least']
     curr_object = dict()
     for line in f.readlines():
         if line.strip() == '//!':
             if len(curr_object) != 0:
-                for i in range(1, len(name_order)):
-                    if name_order[i] not in curr_object:
-                        curr_object[name_order[i]] = curr_object[name_order[i-1]]
-                    if 'description' in curr_object and (i == 2 or i == 3):
-                        curr_object[name_order[i]] += '|' + curr_object['description']
                 ret.append(curr_object)
                 curr_object = dict()
         else:
@@ -64,11 +58,6 @@ def parse_configs(filename):
                 else:
                     curr_object[x] = y
     if len(curr_object) != 0:
-        for i in range(1, len(name_order)):
-            if name_order[i] not in curr_object:
-                curr_object[name_order[i]] = curr_object[name_order[i-1]]
-            if 'description' in curr_object and (i == 2 or i == 3):
-                curr_object[name_order[i]] += '|' + curr_object['description']
         ret.append(curr_object)
         curr_object = dict()
     return ret
@@ -99,16 +88,24 @@ def build_hierarchy():
         add_to_hierarchy(config, hierarchy, name_to_path, alias_to_main)
     return hierarchy, name_to_path, alias_to_main
 
-def list_recurse(hierarchy, tt, indent):
+def list_recurse(hierarchy, tt, indent, with_label = True):
+    name_order = ['main name', 'alias', 'list least', 'list description', 'list some', 'list all']
     if tt != 'list types':
         if 'configs' in hierarchy:
             for i in hierarchy['configs']:
-                print('  '*indent + (i[tt] if type(i[tt]) is str else ','.join(i[tt])))
+                for j in name_order:
+                    if j not in i:
+                        if j == tt:
+                            break
+                        continue
+                    print('  '*(indent+int(j!='main name')) + (j + ": " if with_label else "") + (i[j] if type(i[j]) is str else ','.join(i[j])))
+                    if j == tt:
+                        break
     for x, y in hierarchy.items():
         if x == 'configs':
             continue
         print('  '*indent + x)
-        list_recurse(y, tt, indent+1)
+        list_recurse(y, tt, indent+1, with_label)
 
 def call(filename, args):
     if len(args) == 0:
@@ -120,14 +117,14 @@ def call(filename, args):
         for i in range(2, len(args)):
             args[i] = args[i].upper()
         if len(args) == 1:
-            list_recurse(hierarchy, 'main name', 0)
+            list_recurse(hierarchy, 'main name', 0, False)
         else:
             for i in range(2, len(args)):
                 if args[i] not in hierarchy:
                     print("hierarchy path not found")
                     exit()
                 hierarchy = hierarchy[args[i]]
-            list_recurse(hierarchy, args[1] if args[1] == 'alias' else 'list ' + args[1], 0)
+            list_recurse(hierarchy, args[1] if args[1] == 'alias' or args[1] == 'main name' else 'list ' + args[1], 0)
     else:
         if args[0] not in name_to_path:
             print('template not found')
