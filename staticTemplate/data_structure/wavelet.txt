@@ -1,0 +1,209 @@
+struct wavelet{
+    /*
+    struct bit{
+        vector<int> a, curr;
+        int si;
+        bit(){}
+        bit(int s):si(s), a(s, 1), curr(s, 1){}
+        void resize(int s){
+            curr=vector<int>(s);
+            a = vector<int>(s);
+            si = s;
+        }
+        void toggle(int n){
+            if(n<0||n>=si)
+                return;
+            int val = curr[n] == 1 ? -1 : 1;
+            curr[n] = 1-curr[n];
+            n++;
+            while(n <= si)
+                a[n-1]+=val, n += n&-n;
+        }
+        int query(int n){
+            if(n < 0)
+                return 0;
+            n = min(n, si-1)+1;
+            int out{};
+            while(n >= 1)
+                out += a[n-1], n -= n&-n;
+            return out;
+        }
+    };
+    */
+    struct node{
+        int l, r;
+        vector<int> val;
+        // bit activeLeft;
+        // bit activeRight;
+        // number of elemnts mapping to right
+        // number to left is: i - mapr[i] + 1(0-indexed)
+        vector<int> mapr;
+        node *le{}, *ri{};
+        node(int lv, int rv, vector<int> &a):l(lv), r(rv){
+            for(int i : a)
+                val.push_back(i);
+        }
+        node(int lv, int rv):l(lv), r(rv){}
+    };
+    node *root;
+    // l and r are min and max values
+    wavelet(vector<int> &a, int l, int r){
+        root = new node(l, r, a);
+        build(root);
+    }
+ 
+    void build(node *no){
+        int m = no->l + (no->r-no->l)/2;
+        // no->activeLeft.resize(no->val.size());
+        // no->activeRight.resize(no->val.size());
+        if(no->l == no->r){
+            /*
+            for(int i{}; i < no->val.size(); ++i)
+                no->activeLeft.toggle(i);
+            */
+            return;
+        }
+        no->le = new node(no->l, m);
+        no->ri = new node(m+1, no->r);
+        int run{};
+        for(int i : no->val){
+            if(i <= m){
+                no->le->val.push_back(i);
+                // no->activeLeft.toggle(i);
+            }else{
+                no->ri->val.push_back(i);
+                // no->activeRight.toggle(i);
+                run++;
+            }
+            no->mapr.push_back(run);
+        }
+        build(no->le);
+        build(no->ri);
+    }
+ 
+    // r is 0 indexed
+    int count(int r, int q){
+        node *no = root;
+        while(no->l != no->r){
+            if(r < 0)
+                return 0;
+            int m = no->l + (no->r-no->l)/2;
+            if(q <= m){
+                r = r-no->mapr[r];
+                no = no->le;
+            }else{
+                r = no->mapr[r]-1;
+                no = no->ri;
+            }
+        }
+        // return no->activeLeft.query(r);
+        return r+1;
+    }
+ 
+    // count # indicies in [l, r] that equal q
+    // l, r are 0 indexed
+    int count(int l, int r, int q){
+        return count(r, q) - count(l-1, q);
+    }
+ 
+    // gets kth smallest element in a[l, r]
+    // return -1 if there is none
+    int kth(int l, int r, int k){
+        if(k <= 0 || k > r-l+1)
+            return -1;
+        node *no = root;
+        while(no->l != no->r){
+            int c = r-no->mapr[r]+1-(l == 0 ? 0 : l-1-no->mapr[l-1]+1);
+            // int c = no->activeLeft.query(l-1) - no->activeLeft.query(r);
+            if(k <= c){
+                l = l == 0 ? 0 : l-1-no->mapr[l-1]+1;
+                r = r-no->mapr[r];
+                no = no->le;
+            }else{
+                l = (l == 0 ? 0 : no->mapr[l-1]);
+                r = no->mapr[r]-1;
+                k -= c;
+                no = no->ri;
+            }
+        }
+        return no->l;
+    }
+ 
+ 
+    // counts # of values a[i] such that
+    // l <= i <= r and x <= a[i] <= y
+    int rcount(node *no, int l, int r, int x, int y){
+        if(l > r || no->l > y || no->r < x)
+            return 0;
+        if(x <= no->l && no->r <= y)
+            // return no->activeLeft.query(r)-no->activeLeft.query(l-1)+(no->l == no->r ? 0 : no->activeRight.query(j)-no->activeRight.query(l-1);
+            return r-l+1;
+        return rcount(no->le, l == 0 ? 0 : l-1-no->mapr[l-1]+1, r-no->mapr[r], x, y) 
+            + rcount(no->ri, l == 0 ? 0 : no->mapr[l-1], no->mapr[r]-1, x, y);
+    }
+    int rcount(int l, int r, int x, int y){
+        return rcount(root, l, r, x, y);
+    }
+ 
+    void swap(node *no, int i){
+        if(no->l == no->r || i == (int)no->mapr.size()-1)
+            return;
+        int m = no->l + (no->r-no->l)/2;
+        std::swap(no->val[i], no->val[i+1]);
+        if(no->mapr[i]-(i == 0 ? 0 : no->mapr[i-1])){
+            if(no->mapr[i+1]-no->mapr[i]){
+                swap(no->ri, no->mapr[i]-1);
+            }else{
+                no->mapr[i]--;
+            }
+        }else{
+            if(no->mapr[i+1] - no->mapr[i]){
+                no->mapr[i]++;
+            }else{
+                swap(no->le, i-no->mapr[i]);
+            }
+        }
+    }
+    void swap(int i){
+        swap(root, i);
+    }
+ 
+    /*
+    void toggle(int i){
+        node *no = root;
+        while(no->l != no->r){
+            int m = no->l + (no->r-no->l)/2;
+            if(no->val[i] <= m){
+                no->activeLeft.toggle(i);
+                i = i-no->mapr[i];
+                no = no->le;
+            }else{
+                no->activeRight.toggle(i);
+                i = no->mapr[i]-1;
+                no = no->ri;
+            }
+        }
+        no->activeLeft.toggle(i);
+    }
+    */
+ 
+    void print(node *no){
+        cout << "new vertex\n";
+        cout << no->l << ' ' << no->l + (no->r-no->l)/2 << ' ' << no->r << '\n';
+        for(int i : no->val){
+            cout << i << ' ';
+        }
+        cout << '\n';
+        for(int i : no->mapr)
+            cout << i << ' ';
+        cout << '\n';
+        if(no->le)
+            print(no->le);
+        if(no->ri)
+            print(no->ri);
+ 
+    }
+    void print(){
+        print(root);
+    }
+};

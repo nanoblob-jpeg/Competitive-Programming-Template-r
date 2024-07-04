@@ -9,6 +9,12 @@ typedef int uci;
 #define F first
 #define S second
 typedef complex<double> cd;
+#define rep(i, a, b) for(int i = a; i < (b); ++i)
+#define irep(i, a, b) for(int i = a; i > (b); --i)
+#define all(x) begin(x), end(x)
+#define sz(x) (int)(x).size()
+typedef pair<int, int> pii;
+typedef vector<int> vi;
 
 seed_seq seq{
     (uint64_t) chrono::duration_cast<chrono::nanoseconds>(chrono::high_resolution_clock::now().time_since_epoch()).count(),

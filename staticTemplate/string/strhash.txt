@@ -1,0 +1,57 @@
+array<long long, 2> p;
+bool hash_init = false;
+const long long HASHMOD = 1e9+7;
+long long alpha_lower = 53;
+const long long maxLen = 200000;
+
+array<long long, 2> inv[maxLen];
+long long exp(long long n, long long p){
+    long long out{1};
+    while(p){
+        if(p&1){
+            out *= n;
+            out %= MOD;
+        }
+        n *= n;
+        n %= MOD;
+        p >>= 1;
+    }
+    return out;
+}
+void hashInit(){
+	hash_init = true;
+	p[0] = uniform_int_distribution<int>(alpha_lower, HASHMOD-2)(rng);
+    p[1] = uniform_int_distribution<int>(alpha_lower, HASHMOD-2)(rng);
+
+    array<long long, 2> curr{1, 1};
+    for(int i = 0; i < maxLen; ++i){
+    	inv[i][0] = exp(curr[0], HASHMOD-2);
+    	inv[i][1] = exp(curr[1], HASHMOD-2);
+    	curr[0] = (curr[0]*p[0])%HASHMOD;
+    	curr[1] = (curr[1]*p[1])%HASHMOD;
+    }
+}
+
+void string_hash(string &s, vector<array<int, 2>> &hashes, int offset = 'a'){
+	if(!hash_init) hashInit();
+	hashes.resize(s.size());
+	if(s.size() == 0)
+		return;
+	array<long long, 2> curr = p;
+	hashes[0][0] = hashes[0][1] = (s[0]-offset+1)%HASHMOD;
+	for(int i = 1; i < s.size(); ++i){
+	    hashes[i][0] += (curr[0]*(s[i]-offset+1) + hashes[i-1][0])%MOD;
+        hashes[i][0] %= MOD;
+        hashes[i][1] += (curr[1]*(s[i]-offset+1) + hashes[i-1][1])%MOD;
+        hashes[i][1] %= MOD;
+
+        curr[0] = (curr[0]*p[0])%HASHMOD;
+    	curr[1] = (curr[1]*p[1])%HASHMOD;
+	}
+}
+
+int get(int l, int r, int pl, vector<ar<int, 2>> &hashes){
+    if(l == 0)
+        return hashes[r][pl];
+    return ((hashes[r][pl] - hashes[l-1][pl])%MOD + MOD)%MOD;
+}

@@ -30,6 +30,8 @@ struct BCTree{
             }
 
         for(auto &comp : comps){
+            //dummy node here if all elements in comp
+            //are articulation points
             int node = compnum++;
             adj.push_back({});
             for(int u : comp){
