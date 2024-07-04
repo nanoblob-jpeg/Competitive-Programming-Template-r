@@ -1,0 +1,31 @@
+// dp[index][partition number]
+// uses opt[r][k-1] <= opt[r][k] <= opt[r+1][k]
+// f(i, j, k) calls to determine cost of [i, j] as the kth partition
+//      i and j are 0 indexed
+//      k is 1 indexed
+// verifier problem: https://www.acmicpc.net/problem/13261
+template<typename F>
+int knuth_array_partition(int n, int m, F f){
+	vector<vi> dp(n+1, vi(m+1, LINF));
+	vector<vi> opt(n+1, vi(m+1, n));
+	dp[0][0] = opt[0][0] = 0;
+
+	rep(j, 1, m+1){
+		irep(i, n, 0){
+			if(j == 1){
+				opt[i][j] = 0;
+				dp[i][j] = f(0, i-1, j);
+			}else{
+				int best = LINF;
+				rep(k, opt[i][j-1], i == n ? n+1 : min(n+1, opt[i+1][j]+1)){
+					if(best >= dp[k][j-1] + f(k, i-1, j)){
+						best = dp[k][j-1] + f(k, i-1, j);
+						opt[i][j] = k;
+					}
+				}
+				dp[i][j] = best;
+			}
+		}
+	}
+	return dp.back().back();
+}

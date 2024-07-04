@@ -1,0 +1,29 @@
+// dp[left bound][right bound], inclusive on both sides
+// uses opt[i][j-1] <= opt[i][j] <= opt[i+1][j]
+// f(i, j) calls to determine cost of [i, j]
+//      i and j are 0 indexed
+// verifier problem: https://www.acmicpc.net/problem/13974
+template<typename F>
+int knuth_array_merging(int n, F f){
+	vector<vi> dp(n, vi(n, LINF));
+	vector<vi> opt(n, vi(n));
+	rep(i, 0, n){
+		dp[i][i] = f(i, i);
+		opt[i][i] = i;
+	}
+
+	irep(i, n-1, -1){
+		rep(j, i+1, n){
+			int best = LINF;
+			int c = f(i, j);
+			rep(k, opt[i][j-1], min(j-1, opt[i+1][j])+1){
+				if(best >= dp[i][k] + dp[k+1][j] + c){
+					best = dp[i][k] + dp[k+1][j] + c;
+					opt[i][j] = k;
+				}
+			}
+			dp[i][j] = best;
+		}
+	}
+	return dp[0].back();
+}
