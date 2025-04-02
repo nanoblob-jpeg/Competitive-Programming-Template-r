@@ -1,8 +1,0 @@
-long long:long long:long long
-ONE:TWO:XXXX
-//#start PARAM2:PARAM0:PARAM1
-RETURN gcd(PARAM_INSERT){
-	if(TWO == 0)
-		return ONE;
-	return gcd(TWO, ONE%TWO);
-}

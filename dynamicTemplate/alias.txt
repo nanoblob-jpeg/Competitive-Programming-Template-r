@@ -1,4 +1,0 @@
-gcd C:/Users/jerry/bin/dynamicTemplate/gcd.txt
-lcm C:/Users/jerry/bin/dynamicTemplate/lcm.txt
-dfs C:/Users/jerry/bin/dynamicTemplate/dfs.txt
-bfs C:/Users/jerry/bin/dynamicTemplate/bfs.txt

@@ -1,2 +1,1 @@
-temp $BASEPATH/dynamicTemplate/temp.py
-add $BASEPATH/staticTemplate/add.py
+add $BASEPATH/templates/add.py
