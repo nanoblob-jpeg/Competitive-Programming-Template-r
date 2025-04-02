@@ -17,7 +17,7 @@ int knuth_array_partition(int n, int m, F f){
 				dp[i][j] = f(0, i-1, j);
 			}else{
 				int best = LINF;
-				rep(k, opt[i][j-1], i == n ? n+1 : min(n+1, opt[i+1][j]+1)){
+				rep(k, opt[i][j-1], i == n ? n+1 : min(i+1, opt[i+1][j]+1)){
 					if(best >= dp[k][j-1] + f(k, i-1, j)){
 						best = dp[k][j-1] + f(k, i-1, j);
 						opt[i][j] = k;
