@@ -5,15 +5,11 @@ type.conf
 parser.conf
     each new type is started by a line with only //!
     scheme is defined below, note it is all one tabbed to the right
-    also, arguments can be in any order and can appear multiple times
+    also, arguments can be in any order
 
     //!
-    main name, [one singular main name]
-    alias, put, other, aliases, here , separated, by, commas
-    list all, what to disply for listing all, separated by commas
-    list some, what to disply for listing some, separated by commas
-    list least, what to display for listing least
-    list description, description without commas
+    name, [one singular main name]
+    desc, some short description
 
     reserved type names
         parser path
@@ -21,16 +17,7 @@ parser.conf
 
 
 Hierarchy for listing:
-    main name(default) -> alias -> least -> description -> some -> all
-    When listing what templates exist the script will not search up this hierarchy to finds a config that exists
-    but it will print out all of the ones that appear before in the list
-
-    add list all
-    add list alias
-    add list least
-    add list description
-    add list some
-    add list all
+    name(default) -> description
 
 Can also list types:
     add list types
@@ -39,9 +26,10 @@ Can also list types:
     add list types name subname ... subsub..subname
         will display the hierarchy starting from that type name
 
-notes:
-    underscores replaced by spaces in argument list
-    for listing, names will be converted to all uppercase
+Can also list only things under a certain type:
+    add list [desc] subname .. subsub..subname
 
-conventions for calling the tool:
-when adding default inside of anywhere, at least for data structures, will put the templated class version
+notes:
+    underscores replaced by spaces in argument list only for listing
+    for listing, names will be converted to all uppercase
+    spaces converted to underscores for names and multiple args will be concatenated by underscores

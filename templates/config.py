@@ -9,7 +9,7 @@ def getlen(p):
         p = p.parent
     return out
 
-configs = open("master.conf", "w")
+master_configs = open("master.conf", "w")
 conf_files = list(basepath.glob("**/*.conf"))
 lengths = {x:getlen(x) for x in conf_files}
 
@@ -47,54 +47,48 @@ def gettype(p):
     return "ETC"
 
 parser_confs = [x for x in conf_files if x.name == "parser.conf"]
-alises = set()
+names = set()
+def read_struct(p, configs):
+    global names
+    assert len(configs) > 0
+    ret = dict()
+
+    for line in configs:
+        tokens = [x.strip() for x in line.split(',') if len(x.strip()) > 0]
+        assert len(tokens) == 2, p+" too many arguments on one line"
+        if tokens[0] == "name":
+            assert "name" not in ret, p+" multiple name configs"
+            real_name = tokens[1].replace(' ', '_')
+            assert real_name not in names, p+" duplicate on " + real_name
+            names.add(real_name)
+            ret["name"] = real_name
+        elif tokens[0] == "desc":
+            if "desc" in ret:
+                ret["desc"] = ret["desc"] + ' ' + tokens[1]
+        else:
+            assert False, p+" unrecognized config option"
+
+    assert "name" in ret, p+" config needs name option"
+    return ret
+
 for p in parser_confs:
     a = open(p, "r")
-    temp_struct = None
-    for line in a.readlines():
-        if line.strip() == "//!":
-            if temp_struct is not None and len(temp_struct) != 0:
-                if 'main name' not in temp_struct:
-                    print(f"invalid parser.conf. no main name property in {p}")
-                    temp_struct = {}
-                    continue
-                configs.write("//!\n")
-                configs.write(str(p.parent/'parser.py')+"\n")
-                configs.write("types," + gettype(p) + "\n")
-                for x, y in temp_struct.items():
-                    configs.write(x + "," + ','.join(y) + '\n')
-            temp_struct = {}
+    lines = [x.strip() for x in a.readlines() if len(x.strip()) > 0]
+    structs = []
+    for line in lines:
+        if line == "//!":
+            structs.append([])
         else:
-            tokens = [x.strip() for x in line.split(',') if len(x.strip()) != 0]
-            if len(tokens) <= 1:
-                continue
-            if tokens[0] == 'alias' or tokens[0] == 'main name':
-                for i in tokens[1:]:
-                    if i in alises:
-                        print(f"duplicate alias: {i}")
-                        exit()
-                    alises.add(i)
+            assert len(structs) > 0
+            structs[-1].append(line)
 
-            if tokens[0] == 'main name' and len(tokens) != 2:
-                print("can only have one main name")
-                exit()
-
-            if tokens[0] in temp_struct:
-                temp_struct[tokens[0]].extend(tokens[1:])
-            else:
-                temp_struct[tokens[0]] = tokens[1:]
-
-
-    if temp_struct is not None and len(temp_struct) != 0:
-        if 'main name' not in temp_struct:
-            print(f"invalid parser.conf. no main name property in {p}")
-            temp_struct = {}
-            continue
-        configs.write("//!\n")
-        configs.write(str(p.parent/'parser.py')+"\n")
-        configs.write("types," + gettype(p) + "\n")
-        for x, y in temp_struct.items():
-            configs.write(x + "," + ','.join(y) + '\n')
+    for struct in structs:
+        vals = read_struct(str(p), struct)
+        master_configs.write("//!\n")
+        master_configs.write("parser path," + str(p.parent/'parser.py')+"\n")
+        master_configs.write("types," + gettype(p) + "\n")
+        for x, y in vals.items():
+            master_configs.write(x + "," + y + '\n')
 
     a.close()
-configs.close()
+master_configs.close()
