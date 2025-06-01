@@ -33,14 +33,15 @@ void _rdeb(vector<string> &names, int ind, T t, V... v){
 }
 template<typename... V>
 void _deb(string vars, V... v){
-    vector<string> names(1);
+    vector<string> names(1); int in{};
     for(char c : vars)
-        if(c == ','){
+        if(c == ',' && in == 0){
             while(names.back().size() && isspace(names.back().back())) names.back().pop_back();
             names.push_back("");
-        }else
-            if(!isspace(c) || names.back().size())
-                names.back().push_back(c);
+        }else{
+            if(c == '(') in++; if(c == ')') in--;
+            if(!isspace(c) || names.back().size()) names.back().push_back(c);
+        }
     while(names.back().size() && isspace(names.back().back())) names.back().pop_back();
     _rdeb(names, 0, v...);
 }
