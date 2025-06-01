@@ -2,6 +2,63 @@
 
 using namespace std;
 
+// thank you geothermal :goat:
+void __deb(int t) {cerr << t;}
+void __deb(long t) {cerr << t;}
+void __deb(long long t) {cerr << t;}
+void __deb(unsigned int t) {cerr << t;}
+void __deb(unsigned long t) {cerr << t;}
+void __deb(unsigned long long t) {cerr << t;}
+void __deb(float t) {cerr << t;}
+void __deb(double t) {cerr << t;}
+void __deb(long double t) {cerr << t;}
+void __deb(char t) {cerr << '\'' << t << '\'';}
+void __deb(const char *t) {cerr << '\"' << t << '\"';}
+void __deb(const string &t) {cerr << '\"' << t << '\"';}
+void __deb(bool t) {cerr << (t ? "true" : "false");}
+template<typename T, typename V>
+void __deb(const pair<T, V> &x){ cerr << '{'; __deb(x.first); cerr << ", "; __deb(x.second); cerr << '}'; }
+template<typename T>
+void __deb(const T &x){
+    int f = 0; cerr << '{'; 
+    for(auto &i: x){ if(f++) cerr << ", "; __deb(i);}
+    cerr << "}";
+}
+void _rdeb(vector<string> &names, int ind){}
+template<typename T, typename... V>
+void _rdeb(vector<string> &names, int ind, T t, V... v){
+    if(ind != 0) cerr << "==============\n";
+    cerr << names[ind] << '\n'; __deb(t); cerr << '\n';
+    _rdeb(names, ind+1, v...);
+}
+template<typename... V>
+void _deb(string vars, V... v){
+    vector<string> names(1);
+    for(char c : vars)
+        if(c == ','){
+            while(names.back().size() && isspace(names.back().back())) names.back().pop_back();
+            names.push_back("");
+        }else
+            if(!isspace(c) || names.back().size())
+                names.back().push_back(c);
+    while(names.back().size() && isspace(names.back().back())) names.back().pop_back();
+    _rdeb(names, 0, v...);
+}
+#ifdef DEBUG
+#define deb(x...) {                              \
+    cerr << __func__ << ':' << __LINE__ << '\n'; \
+    _deb(#x, x);                                 \
+}
+#define debsep(x...) {                           \
+    cerr << __func__ << ':' << __LINE__ << '\n'; \
+    _deb(#x, x);                                 \
+    cerr << "****************************\n";    \
+}
+#else
+#define deb(x...)
+#define debsep(x...)
+#endif
+
 #define ar array
 #define ll long long
 typedef int uci;
