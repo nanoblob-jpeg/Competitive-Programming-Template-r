@@ -49,6 +49,7 @@ void _deb(string vars, V... v){
 #define deb(x...) {                              \
     cerr << __func__ << ':' << __LINE__ << '\n'; \
     _deb(#x, x);                                 \
+    cerr << '\n';                                \
 }
 #define debsep(x...) {                           \
     cerr << __func__ << ':' << __LINE__ << '\n'; \
