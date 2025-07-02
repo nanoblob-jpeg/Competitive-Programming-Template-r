@@ -1,4 +1,5 @@
 import sys
+from config import read_struct
 basepath = __file__.replace("\\", "/").rsplit("/", 1)[0] + "/"
 class file_writer():
     def __init__(self, filename):
@@ -41,25 +42,19 @@ class file_writer():
 
 def parse_configs(filename):
     f = open(filename, 'r')
-    ret = []
-    curr_object = dict()
-    for line in f.readlines():
-        if line.strip() == '//!':
-            if len(curr_object) != 0:
-                ret.append(curr_object)
-                curr_object = dict()
+    lines = [x.strip() for x in f.readlines() if len(x.strip()) > 0]
+    structs = []
+    for line in lines:
+        if line == "//!":
+            structs.append([])
         else:
-            x, *y = line.strip().split(',')
-            if x == 'main name':
-                curr_object[x] = y[0]
-            else:
-                if(len(y) == 0):
-                    curr_object['parser path'] = x
-                else:
-                    curr_object[x] = y
-    if len(curr_object) != 0:
-        ret.append(curr_object)
-        curr_object = dict()
+            assert len(structs) > 0
+            structs[-1].append(line)
+
+    ret = []
+    names = set()
+    for struct in structs:
+        ret.append(read_struct("", struct, names, tostr = False))
     return ret
 
 def add_to_hierarchy(config, hierarchy, name_to_path, alias_to_main):
@@ -89,7 +84,7 @@ def build_hierarchy():
     return hierarchy, name_to_path, alias_to_main
 
 def list_recurse(hierarchy, tt, indent, with_label = True):
-    name_order = ['main name', 'alias', 'list least', 'list description', 'list some', 'list all']
+    name_order = ['main name', 'alias']
     if tt != 'list types':
         if 'configs' in hierarchy:
             for i in hierarchy['configs']:
@@ -124,7 +119,7 @@ def call(filename, args):
                     print("hierarchy path not found")
                     exit()
                 hierarchy = hierarchy[args[i]]
-            list_recurse(hierarchy, args[1] if args[1] == 'alias' or args[1] == 'main name' else 'list ' + args[1], 0)
+            list_recurse(hierarchy, args[1], 0)
     else:
         if args[0] not in name_to_path:
             print('template not found')

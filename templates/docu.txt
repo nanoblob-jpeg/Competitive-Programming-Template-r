@@ -10,6 +10,7 @@ parser.conf
     //!
     name, [one singular main name]
     desc, some short description
+    alias, comma, separated, other aliases
 
     reserved type names
         parser path
