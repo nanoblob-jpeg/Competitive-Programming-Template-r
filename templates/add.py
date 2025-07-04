@@ -58,12 +58,12 @@ def parse_configs(filename):
     return ret
 
 def add_to_hierarchy(config, hierarchy, name_to_path, alias_to_main):
-    name_to_path[config['main name']] = config['parser path']
+    name_to_path[config['name']] = config['parser path']
     if 'alias' in config:
         for a in config['alias']:
             name_to_path[a] = config['parser path']
-            alias_to_main[a] = config['main name']
-    alias_to_main[config['main name']] = config['main name']
+            alias_to_main[a] = config['name']
+    alias_to_main[config['name']] = config['name']
     ref = hierarchy
     for i in range(len(config['types'])):
         if config['types'][i] not in ref:
@@ -84,8 +84,8 @@ def build_hierarchy():
     return hierarchy, name_to_path, alias_to_main
 
 def list_recurse(hierarchy, tt, indent, with_label = True):
-    name_order = ['main name', 'alias']
-    if tt != 'list types':
+    name_order = ['name', 'alias', 'desc']
+    if tt != 'types':
         if 'configs' in hierarchy:
             for i in hierarchy['configs']:
                 for j in name_order:
@@ -93,7 +93,7 @@ def list_recurse(hierarchy, tt, indent, with_label = True):
                         if j == tt:
                             break
                         continue
-                    print('  '*(indent+int(j!='main name')) + (j + ": " if with_label else "") + (i[j] if type(i[j]) is str else ','.join(i[j])))
+                    print('  '*(indent+int(j!='name')) + (j + ": " if with_label else "") + (i[j] if type(i[j]) is str else ','.join(i[j])))
                     if j == tt:
                         break
     for x, y in hierarchy.items():
@@ -106,20 +106,19 @@ def call(filename, args):
     if len(args) == 0:
         return
     hierarchy, name_to_path, alias_to_main = build_hierarchy()
-    for i in range(len(args)):
-        args[i] = args[i].replace('_', ' ')
     if args[0] == 'list':
         for i in range(2, len(args)):
             args[i] = args[i].upper()
         if len(args) == 1:
-            list_recurse(hierarchy, 'main name', 0, False)
+            list_recurse(hierarchy, 'name', 0, False)
         else:
             for i in range(2, len(args)):
+                args[i] = args[i].upper()
                 if args[i] not in hierarchy:
                     print("hierarchy path not found")
                     exit()
                 hierarchy = hierarchy[args[i]]
-            list_recurse(hierarchy, args[1], 0)
+            list_recurse(hierarchy, args[1] if args[1] != 'main' else 'name', 0)
     else:
         if args[0] not in name_to_path:
             print('template not found')

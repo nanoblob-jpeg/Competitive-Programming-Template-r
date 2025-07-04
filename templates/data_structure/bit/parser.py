@@ -3,9 +3,9 @@ def parse(fw, name, args):
     default = 'sum'
     files = dict()
 
-    files['templated'] = basepath+'bit_templated.txt'
-    files['sum'] = basepath+'bit_sum.txt'
-    files['xor'] = basepath+'bit_xor.txt'
+    files['templated'] = basepath+'bit_templated.cpp'
+    files['sum'] = basepath+'bit_sum.cpp'
+    files['xor'] = basepath+'bit_xor.cpp'
 
     if 'default' in args:
         f = open(files['templated'], 'r')
@@ -19,6 +19,8 @@ def parse(fw, name, args):
             default = 'sum'
         elif arg == 'xor':
             default = 'xor'
+        elif arg == 'temp':
+            default = 'templated'
 
     if default not in files:
         print("bit type not found here")

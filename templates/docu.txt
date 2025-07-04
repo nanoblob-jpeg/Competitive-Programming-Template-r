@@ -29,8 +29,3 @@ Can also list types:
 
 Can also list only things under a certain type:
     add list [desc] subname .. subsub..subname
-
-notes:
-    underscores replaced by spaces in argument list only for listing
-    for listing, names will be converted to all uppercase
-    spaces converted to underscores for names and multiple args will be concatenated by underscores

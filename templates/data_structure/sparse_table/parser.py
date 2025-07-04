@@ -1,11 +1,11 @@
 def parse(fw, name, args):
     basepath = __file__.replace("\\", "/").rsplit("/", 1)[0] + "/"
-    default = 'min'
+    default = 'inline'
     files = dict()
 
-    files['templated'] = basepath+'sparse_table_templated.txt'
-    files['min'] = basepath+'sparse_table_min.txt'
-    files['max'] = basepath+'sparse_table_max.txt'
+    files['templated'] = basepath+'sparse_table_templated.cpp'
+    files['inline'] = basepath+'sparse_table_inline.cpp'
+    files['max'] = basepath+'sparse_table_max.cpp'
 
     if 'default' in args:
         f = open(files['templated'], 'r')
@@ -15,8 +15,8 @@ def parse(fw, name, args):
         exit()
 
     for arg in args:
-        if arg == 'min':
-            default = 'min'
+        if arg == 'inline' or arg == 'min':
+            default = 'inline'
         elif arg == 'max':
             default = 'max'
 
