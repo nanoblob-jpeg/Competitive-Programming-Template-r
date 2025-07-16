@@ -3,4 +3,16 @@ if [[ $# -eq 0 ]] ; then
 	echo 'need file name'
 	exit 1
 fi
-g++ -std=c++17 $PWD/$1 -o $PWD/test.exe
+setNoWarnings=1
+for arg in "${@:2}"
+do
+    if [[ $arg == "-W"* ]]; then
+        setNoWarnings=0
+    fi
+done
+
+if [[ $setNoWarnings == 1 ]]; then
+    g++ -std=c++17 -w $PWD/$1 -o $PWD/test ${@:2}
+else
+    g++ -std=c++17 $PWD/$1 -o $PWD/test ${@:2}
+fi
