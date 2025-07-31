@@ -1,3 +1,7 @@
+//  yosupo: https://judge.yosupo.jp/submission/304215
+//  158ms, 16.23Mb
+//  n = q = 5e5
+//
 template <typename T>
 class segtree{
 public:

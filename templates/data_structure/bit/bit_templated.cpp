@@ -1,19 +1,20 @@
+//  yosupo: https://judge.yosupo.jp/submission/304214
+//  111ms, 11.99Mb
+//  n = q = 5e5
+//
 template <typename T>
 class bit{
 public:
     vector<T> tree;
     int si;
-    bit(int n): tree(n){si = n;}
-    bit(vector<T> &a): tree(a.size()), si(a.size()){
-        for(int i{}; i < a.size(); ++i){
-            update(i, a[i]);
-        }
+    bit(int n): tree(n), si(n){}
+    bit(vector<T> &a): tree(a), si(a.size()){
+        for(int i = si; i >= 1; --i)
+            update(i+(i&-i)-1, tree[i-1]);
     }
-    inline T comb(T a, T b){
-        return a+b;
-    }
-    inline T inv(T a, T b){
-        return comb(a, -b);
+    bit(vector<T> &&a): si(a.size()), tree(a){
+        for(int i = si; i >= 1; --i)
+            update(i+(i&-i)-1, tree[i-1]);
     }
 
     // 0 indexed
@@ -33,7 +34,7 @@ public:
         ind++;
         while(ind >= 1){
             sum = comb(sum, tree[ind-1]);
-            ind -= ind&-ind;
+            ind ^= ind&-ind;
         }
         return sum;
     }
@@ -41,9 +42,15 @@ public:
     // [start, end], 0 indexed
     T query(int start, int end){
         T sum = query(end);
-        if(start != 0){
+        if(start != 0)
             sum = inv(sum, query(start-1));
-        }
         return sum;
+    }
+
+    inline T comb(T a, T b){
+        return a+b;
+    }
+    inline T inv(T a, T b){
+        return comb(a, -b);
     }
 };

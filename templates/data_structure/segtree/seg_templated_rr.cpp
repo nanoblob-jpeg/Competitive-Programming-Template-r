@@ -18,7 +18,7 @@ public:
             update(i, i, val[i]);
     }
 
-    void update(int v, int val, int l, int r, int lq, int rq){
+    void update(int v, T val, int l, int r, int lq, int rq){
         if(l > r || lq > r || rq < l)
             return;
         else if(lq <= l && r <= rq){
