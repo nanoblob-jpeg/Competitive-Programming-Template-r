@@ -3,6 +3,7 @@ def parse(fw, name, args):
     default = 'path'
     files = dict()
     files['path'] = basepath+'uf.cpp'
+    files['pot'] = basepath+'uf_pot.cpp'
 
     if 'default' in args:
         f = open(files['path'], 'r')
@@ -14,6 +15,8 @@ def parse(fw, name, args):
     for arg in args:
         if arg == 'path':
             default = 'path'
+        if arg == 'pot':
+            default = 'pot'
 
     if default not in files:
         print("segtree type not found here")
