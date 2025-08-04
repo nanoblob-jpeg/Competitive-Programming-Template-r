@@ -1,24 +1,24 @@
-template <typename T>
+template <typename T, typename L = T>
 class segtree{
 public:
-    vector<T> seg, lazy;
+    T def{};
+    L ldef{};
+    vector<T> seg;
+    vector<L> lazy;
     int boundl, boundr;
-    segtree(int length): seg(4*length), lazy(4*length, def){
+    segtree(int length): seg(4*length, def), lazy(4*length, ldef){
         boundl = 0, boundr = length-1;
     }
     // bounds are then indexed by offsets to these
-    segtree(int lbound, int rbound) : seg(4*(rbound-lbound+1)), lazy(4*(rbound-lbound+1), def){
+    segtree(int lbound, int rbound) : segtree(rbound-lbound+1){
         boundl = lbound, boundr = rbound;
     }
-    segtree(vector<T> &val){
-        seg = vector<T>(4*val.size());
-        lazy = vector<T>(4*val.size(), def);
-        boundl = 0, boundr = val.size()-1;
+    segtree(vector<T> &val) : segtree(val.size()){
         for(int i{}; i < val.size(); ++i)
             update(i, i, val[i]);
     }
 
-    void update(int v, T val, int l, int r, int lq, int rq){
+    void update(int v, L val, int l, int r, int lq, int rq){
         if(l > r || lq > r || rq < l)
             return;
         else if(lq <= l && r <= rq){
@@ -44,7 +44,7 @@ public:
     }
 
     // [l, r], 0 indexed
-    void update(int l, int r, int val){
+    void update(int l, int r, L val){
         update(1, val, boundl, boundr, l, r);
     }
     // [l, r], 0 indexed
@@ -52,19 +52,18 @@ public:
         return query(1, boundl, boundr, l, r);
     }
 
-    T def{};
     // combining any two values
     inline T comb(T f, T s){
         return f+s;
     }
     // for when we reach a need to lazy update
-    inline void incr(T& val, T& lazy, T newVal, int l, int r){
+    inline void incr(T& val, L& lazy, L newVal, int l, int r){
         val += (r-l+1)*newVal;
         lazy += newVal;
     }
     // for pushing lazy
-    inline void push(T& lazy, int v, int l, int mid, int r){
-        if(lazy != def){
+    inline void push(L& lazy, int v, int l, int mid, int r){
+        if(lazy != ldef){
             update(v*2, lazy, l, mid, l, mid);
             update(v*2+1, lazy, mid+1, r, mid+1, r);
             lazy = def;
