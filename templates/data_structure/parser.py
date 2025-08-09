@@ -5,6 +5,7 @@ def parse(fw, name, args):
     files['suffix array'] = basepath+'suffixarray.txt'
     files['block cut tree'] = basepath+'bctree.txt'
     files['wavelet tree'] = basepath+'wavelet.txt'
+    files['prefix_sum'] = basepath+'psum.cpp'
 
     if name not in files:
         print("name not found here")
