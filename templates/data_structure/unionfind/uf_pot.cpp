@@ -69,7 +69,7 @@ public:
 
     inline T connect(T a, T b, T c){
         // this is for connecting between two trees
-        // a = [x...y], c = [z...w], b = [x..yz..w]
+        // a = [x...y], c = [w...z], b = [x..yz..w]
         //
         return comb(comb(b, inv(a)), c);
     }
