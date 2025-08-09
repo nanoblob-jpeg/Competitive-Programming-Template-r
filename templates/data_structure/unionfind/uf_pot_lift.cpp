@@ -1,5 +1,6 @@
 //  yosupo: https://judge.yosupo.jp/submission/304943
-//  137ms, 75.41Mb
+//  liftAmt = 20: 137ms, 75.41Mb
+//  liftAmt = 5: 78ms, 29.60Mb
 //  n = q = 2e5
 //
 template<typename T, int liftAmt = 20>
