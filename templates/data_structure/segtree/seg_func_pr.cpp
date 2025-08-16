@@ -1,5 +1,5 @@
-//  yosupo: https://judge.yosupo.jp/submission/307853
-//  158ms, 16.23Mb
+//  yosupo: https://judge.yosupo.jp/submission/307857
+//  344ms, 26.74Mb
 //  n = q = 5e5
 //
 // forward decl
@@ -46,14 +46,20 @@ public:
         return Op::combine(lret, rret);
     }
 };
-
+const int MOD = 998244353;
 template <typename T>
 struct SegOp{
-    static constexpr T identity = -1e9;
-    static T combine(const T& a, const T& b){
-        return max(a, b);
+    static T identity;
+    static T combine(const T& a, const T& c){
+        int m = (a.m * c.m)%MOD;
+        int b = ((a.b * c.m)%MOD + c.b)%MOD;
+        return T(m, b);
     }
     static T leafCombine(const T& a, const T& b){
-        return max(a, b);
+        return b;
     }
+};
+struct Func{
+    int m, b;
+    Func(int x = 1, int y = 0):m(x),b(y){}
 };

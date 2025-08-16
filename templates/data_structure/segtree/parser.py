@@ -8,6 +8,7 @@ def parse(fw, name, args):
     files['iter'] = basepath+'seg_iter_pr.cpp'
     files['arith'] = basepath+'seg_arith_rr.cpp'
     files['merge'] = basepath+'seg_merge.cpp'
+    files['funcpr'] = basepath+'seg_func_pr.cpp'
 
     if 'default' in args:
         f = open(files['templated'], 'r')
@@ -25,6 +26,8 @@ def parse(fw, name, args):
             default = 'arith'
         elif arg == 'merge':
             default = 'merge'
+        elif arg == 'funcpr':
+            default = 'funcpr'
 
     if default not in files:
         print("segtree type not found here")
