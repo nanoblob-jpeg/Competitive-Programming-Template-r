@@ -93,7 +93,13 @@ def list_recurse(hierarchy, tt, indent, with_label = True):
                         if j == tt:
                             break
                         continue
-                    print('  '*(indent+int(j!='name')) + (j + ": " if with_label else "") + (i[j] if type(i[j]) is str else ','.join(i[j])))
+                    if j == 'desc':
+                        print('  '*(indent+int(j!='name')) + (j + ": " if with_label else ""))
+                        vals = [x.strip() for x in i[j].split('|') if len(x.strip()) > 0]
+                        for val in vals:
+                            print('  '*(indent+int(j!='name')+1) + val)
+                    else:
+                        print('  '*(indent+int(j!='name')) + (j + ": " if with_label else "") + (i[j] if type(i[j]) is str else ','.join(i[j])))
                     if j == tt:
                         break
     for x, y in hierarchy.items():

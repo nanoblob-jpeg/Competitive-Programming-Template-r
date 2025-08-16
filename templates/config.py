@@ -16,7 +16,7 @@ def read_struct(p, configs, names, tostr = True):
             ret["name"] = real_name
         elif tokens[0] == "desc":
             if "desc" in ret:
-                ret["desc"] = ret["desc"] + ' ' + tokens[1]
+                ret["desc"] = ret["desc"] + ' | ' + tokens[1]
             else:
                 ret["desc"] = tokens[1]
         elif tokens[0] == "alias":
