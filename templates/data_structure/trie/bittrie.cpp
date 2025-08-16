@@ -2,7 +2,7 @@
 //  non cleanup
 //  430ms, 280.06Mb
 //  q = 5e5
-//  non cleanup
+//  cleanup
 //  in random -> ~0.5x memory, but max mem still same
 //
 template<int bits = 30, bool multiset = true>
