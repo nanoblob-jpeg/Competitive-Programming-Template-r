@@ -1,5 +1,5 @@
-//  yosupo: https://judge.yosupo.jp/submission/309431
-//  58ms, 13.44Mb
+//  yosupo: https://judge.yosupo.jp/submission/309439
+//  104ms, 19.85Mb
 //  n = q = 2e5
 //
 template <typename T>
@@ -80,18 +80,56 @@ public:
 };
 
 const int MOD = 998244353;
+struct matrix{
+    array<array<int, 2>, 2> val;
+    constexpr matrix():val(){}
+    constexpr matrix(int a, int b, int c, int d):val{{{a, b}, {c, d}}}{}
+    int det(){
+        return (((val[0][0]*val[1][1])%MOD - (val[0][1]*val[1][0])%MOD)%MOD + MOD)%MOD;
+    }
+    void mult(int m){
+        val[0][0] = (val[0][0]*m)%MOD;
+        val[0][1] = (val[0][1]*m)%MOD;
+        val[1][0] = (val[1][0]*m)%MOD;
+        val[1][1] = (val[1][1]*m)%MOD;
+    }
+    void inv(){
+        int d = det();
+        swap(val[0][0], val[1][1]);
+        val[0][1] = ((val[0][1]*-1)+MOD)%MOD;
+        val[1][0] = ((val[1][0]*-1)+MOD)%MOD;
+        mult(d);
+    }
+
+    bool operator==(const matrix& other){
+        return val == other.val;
+    }
+    bool operator!=(const matrix& other){
+        return val != other.val;
+    }
+};
+
 template <typename T>
 struct UFOp{
-    static constexpr T identity = 0;
-    static constexpr T invalid = -1;
+    static constexpr T identity = T(1, 0, 0, 1);
+    static constexpr T invalid = T(-1, -1, -1, -1);
     // inverse
     static T inv(T a){
-        return ((-a)%MOD+MOD)%MOD;
+        a.inv();
+        return a;
     }
 
     static T combine(T a, T b){
         // this is for joining two weights end to end
-        return (a+b)%MOD;
+        T ret;
+        for(int i{}; i < 2; ++i){
+            for(int j{}; j < 2; ++j){
+                for(int k{}; k < 2; ++k){
+                    ret.val[i][j] = (ret.val[i][j] + (a.val[i][k]*b.val[k][j])%MOD)%MOD;
+                }
+            }
+        }
+        return ret;
     }
 
     static T connect(T a, T b, T c){

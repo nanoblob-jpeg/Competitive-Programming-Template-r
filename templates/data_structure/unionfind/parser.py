@@ -4,7 +4,7 @@ def parse(fw, name, args):
     files = dict()
     files['path'] = basepath+'uf.cpp'
     files['pot'] = basepath+'uf_pot.cpp'
-    files['potlift'] = basepath+'uf_pot_lift.cpp'
+    files['mat'] = basepath+'uf_pot_mat.cpp'
 
     if 'default' in args:
         f = open(files['path'], 'r')
@@ -18,11 +18,11 @@ def parse(fw, name, args):
             default = 'path'
         if arg == 'pot':
             default = 'pot'
-        if arg == 'potlift':
-            default = 'potlift'
+        if arg == 'mat':
+            default = 'mat'
 
     if default not in files:
-        print("segtree type not found here")
+        print("union find type not found here")
         exit()
 
     f = open(files[default], 'r')

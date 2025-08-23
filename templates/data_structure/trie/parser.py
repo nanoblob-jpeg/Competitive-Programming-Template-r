@@ -17,7 +17,7 @@ def parse(fw, name, args):
             default = 'bit'
 
     if default not in files:
-        print("bit type not found here")
+        print("trie type not found here")
         exit()
     f = open(files[default], 'r')
     for line in f.readlines():
