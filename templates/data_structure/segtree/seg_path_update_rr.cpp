@@ -28,7 +28,7 @@ public:
         int mid = l + (r-l)/2;
         build(v*2, l, mid, val);
         build(v*2+1, mid+1, r, val);
-        seg[v] = Op::combine(seg[v*2], seg[v*2+1]);
+        Op::combine(seg[v], seg[v*2], seg[v*2+1]);
     }
 
     void update(int v, L val, int l, int r, int lq, int rq){
@@ -41,7 +41,7 @@ public:
             push(lazy[v], v, l, mid, r);
             update(v*2, val, l, mid, lq, rq);
             update(v*2+1, val, mid+1, r, lq, rq);
-            seg[v] = Op::combine(seg[v*2], seg[v*2+1]);
+            Op::combine(seg[v], seg[v*2], seg[v*2+1]);
         }
     }
     R query(int v, int l, int r, int lq, int rq){
@@ -61,7 +61,7 @@ public:
             update(v*2, lazy, l, mid, l, mid);
             update(v*2+1, lazy, mid+1, r, mid+1, r);
             lazy = Op::lazyIdentity;
-            seg[v] = Op::combine(seg[v*2], seg[v*2+1]);
+            Op::combine(seg[v], seg[v*2], seg[v*2+1]);
         }
     }
 
@@ -84,8 +84,8 @@ struct SegOp{
     static constexpr L lazyIdentity = 0;
     static constexpr R returnIdentity = 0;
     // combining any two stored values
-    static T combine(T& f, T& s){
-        return f+s;
+    static void combine(T& a, T& left, T& right){
+        a = left+right;
     }
     // combining any two return values
     static R combineQuery(R&& f, R&& s){
