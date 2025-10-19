@@ -6,6 +6,7 @@
 template <typename T, typename L, typename R>
 struct SegOp;
 
+//! test start ds
 template <typename T, typename L = T, typename R = T, template <typename, typename, typename> class Comb = SegOp>
 class segtree{
 public:
@@ -48,6 +49,7 @@ public:
         return Op::queryCombine(lret, rret);
     }
 };
+//! test end ds
 
 template <typename T, typename L, typename R>
 struct SegOp{

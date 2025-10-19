@@ -18,12 +18,16 @@ class file_writer():
                 if type(s) is str:
                     if(len(s) == 0):
                         continue
+                    if s.startswith("//! test"):
+                        continue
                     if(s[-1] == '\n'):
                         self._towrite.append(s)
                     else:
                         self._towrite.append(s + '\n')
         elif type(ss) is str:
             if(len(ss) == 0):
+                return
+            if ss.startswith("//! test"):
                 return
             if(ss[-1] == '\n'):
                 self._towrite.append(ss)
