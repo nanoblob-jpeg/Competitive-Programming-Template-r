@@ -1,6 +1,6 @@
 [submodule "templates/library-checker-problems"]
-	path = templates/library-checker-problems
+	path = templates/testing/library-checker-problems
 	url = https://github.com/yosupo06/library-checker-problems.git
 [submodule "templates/oj"]
-	path = templates/oj
+	path = templates/testing/oj
 	url = https://github.com/online-judge-tools/oj.git
