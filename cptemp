@@ -10,6 +10,12 @@ if [ "$1" == "min" ] ; then
         exit 1
     fi
     cp C:/Users/jerry/bin/template_min.cpp $PWD/$2
+if [ "$1" == "base" ] ; then
+    if [[ $# -eq 1 ]] ; then
+        echo "need to provide file name"
+        exit 1
+    fi
+    cp C:/Users/jerry/bin/template_base.cpp $PWD/$2
 else
     cp C:/Users/jerry/bin/template.cpp $PWD/$1
 fi
