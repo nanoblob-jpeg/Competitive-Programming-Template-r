@@ -1,7 +1,7 @@
 //  yosupo: https://judge.yosupo.jp/submission/309930
 //  154ms, 16.28Mb
 //  n = q = 5e5
-//
+//! stats end
 // forward decl
 template <typename T, typename L, typename R>
 struct SegOp;
