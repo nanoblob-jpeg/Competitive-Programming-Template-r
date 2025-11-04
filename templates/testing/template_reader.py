@@ -81,5 +81,3 @@ def add_stats_to_file(file, stats):
                 else:
                     f.write(line + '\n')
         raise
-
-add_stats_to_file("../data_structure/segtree/seg_iter_pr.cpp", "//hihi\n//hello")

@@ -1,4 +1,4 @@
-import subprocess, os, shutil
+import subprocess, os, shutil, sys
 basepath = __file__.replace("\\", "/").rsplit("/", 1)[0] + "/"
 
 # returns true if the subprocess executed successfully
@@ -23,3 +23,5 @@ if not generate_tests("unionfind"):
     exit(0)
 
 cleanup_tests(["data_structure", "unionfind"])
+
+
