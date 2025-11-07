@@ -1,5 +1,5 @@
 import subprocess, os, shutil, sys, argparse, glob
-from logging import DEBUG, INFO, StreamHandler, basicConfig, getLogger
+from logging import DEBUG, INFO, CRITICAL, StreamHandler, basicConfig, getLogger
 logger = getLogger(__name__)
 basepath = __file__.replace("\\", "/").rsplit("/", 1)[0] + "/"
 
@@ -33,23 +33,39 @@ def run_wrapper(args):
     level = INFO
     if parsed.verbose:
         level = DEBUG
+    if parsed.silent:
+        level = CRITICAL
     handler = StreamHandler(sys.stdout)
     handler.setFormatter(log_formatter.LogFormatter())
     basicConfig(level=level, handlers=[handler])
 
-    run(parsed)
+    # (ac_count, slowest, heaviest(memory), list of history)
+    # example history thing: 
+    """
+    {
+        'status': 'AC', 
+        'testcase': {'name': 'example_00', 'input': 'file path', 'output': 'file path'}, 
+        'output': '0\r\n1\r\n0\r\n1\r\n', 
+        'exitcode': 0, 
+        'elapsed': 0.008006799966096878, 
+        'memory': None
+    }
+    """
+    return run(parsed)
 
 if __name__ == '__main__':
     in_files = glob.glob('./library-checker-problems/data_structure/unionfind/in/*')
     out_files = glob.glob('./library-checker-problems/data_structure/unionfind/out/*')
-    args = ['t', '--format=library-checker-problems/data_structure/unionfind/%f/%s.%e', '--directory=./']
+    args = ['t', '--silent', '--format=library-checker-problems/data_structure/unionfind/%f/%s.%e', '--directory=./']
     args.extend(in_files)
     args.extend(out_files)
-    run_wrapper(args)
+    a, b, c, d = run_wrapper(args)
+    print(a, b, c)
 
 '''
 TODO:
     write parser for the test files which increases stack size using the stsize thing we have
     make this configurable to run the different tests
     figure out how to parse the output from it
+    write config file for stats logging messages
 '''

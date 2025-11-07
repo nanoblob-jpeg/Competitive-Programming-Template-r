@@ -1,3 +1,5 @@
+import json
+
 class TemplateReader:
     def __init__(self):
         self.parts = dict()
@@ -33,12 +35,14 @@ class TestTemplateWriter:
     def __init__(self, output_path):
         self.output_path = output_path
 
-    def template_test(self, test_path, template_reader):
+    def template_test(self, test_path, template_reader, alias_mapping = dict()):
         with open(self.output_path, 'w') as out_f:
             with open(test_path, 'r') as in_f:
                 for line in in_f.readlines():
                     if line.strip().startswith("//! test"):
                         _, _, arg = line.strip().split()
+                        if arg in alias_mapping:
+                            arg = alias_mapping[arg]
                         for part in template_reader.get_part(arg):
                             if part.endswith('\n'):
                                 out_f.write(part)
@@ -50,6 +54,20 @@ class TestTemplateWriter:
                         else:
                             out_f.write(line + '\n')
 
+class ConfigReader:
+    def __init__(self):
+        self.configs = dict()
+
+    def parse_file(self, file):
+        with open(file, 'r') as f:
+            data = json.load(f)
+
+            for key, item in data.items():
+                self.configs[key] = item
+
+# TODO: create a temp database with file hash
+# minus comments so that we can get averaged
+# more consistent timings
 def add_stats_to_file(file, stats):
     lines = []
     with open(file, 'r') as f:

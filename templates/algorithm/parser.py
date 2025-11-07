@@ -1,7 +1,7 @@
 def parse(fw, name, args):
     basepath = __file__.replace("\\", "/").rsplit("/", 1)[0] + "/"
     files = dict()
-    files['stack size'] = basepath+'stacksize.txt'
+    files['stack_size'] = basepath+'stacksize.txt'
 
     if name not in files:
         print("name not found here")

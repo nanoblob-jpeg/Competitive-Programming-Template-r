@@ -28,9 +28,12 @@ Can also list types:
         will display the hierarchy starting from that type name
 
 Can also list only things under a certain type:
-    add list [one of name|desc|alias] subname .. subsub..subname
+    add list [one of main|name|desc|alias] subname .. subsub..subname
 
 For testing purposes, you can specify blocks to use in automated solutions by surrounding
 //! test start [identifying string]
 ...
 //! test end [identifying string]
+
+//! stats end
+signifies the end of testing stats for the given template. it is a prefix of the file
