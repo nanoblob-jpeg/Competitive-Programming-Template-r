@@ -53,6 +53,19 @@ def run_wrapper(args):
     """
     return run(parsed)
 
+def run_wrapper_wrapper(test_path, silent = True):
+    in_files = glob.glob(f'./library-checker-problems/{test_path}/in/*')
+    out_files = glob.glob(f'./library-checker-problems/{test_path}/out/*')
+    args = ['t']
+    if silent:
+        args.append('--silent')
+    args.append(f'--format=library-checker-problems/{test_path}/%f/%s.%e')
+    args.append('--directory=./')
+    args.extend(in_files)
+    args.extend(out_files)
+    ac_count, slowest, heaviest, hist = run_wrapper(args)
+    return (ac_count, len(in_files), slowest, heaviest, hist)
+
 if __name__ == '__main__':
     in_files = glob.glob('./library-checker-problems/data_structure/unionfind/in/*')
     out_files = glob.glob('./library-checker-problems/data_structure/unionfind/out/*')

@@ -1,4 +1,5 @@
 from template_reader import TemplateReader, TestTemplateWriter, ConfigReader, StatsConfigReader, add_stats_to_file
+from oj_wrapper import run_wrapper_wrapper
 import subprocess, os, shutil, sys
 basepath = __file__.replace("\\", "/").rsplit("/", 1)[0] + "/"
 
@@ -27,7 +28,7 @@ stats_configs.parse_file(f"{basepath}/stats.conf")
 just_template = False
 just_compile = False
 
-def run_test(template_name, test_options):
+def run_test(template_name, test_options, write_stats = False):
     # make sure we have all of the options we need
     if "library-checker-path" not in test_options or "library-checker-name" not in test_options or "test-template-file" not in test_options:
         print("%s has incorrect test options" % template_name)
@@ -67,12 +68,23 @@ def run_test(template_name, test_options):
         if just_compile:
             return
 
-        # TODO: now call oj to run compiled solution against all tests
+
+        ac_count, total_tests, slowest, heaviest, hist = run_wrapper_wrapper(test_options['library-checker-path'])
+        if ac_count != total_tests:
+            print("%s failed on %s with %i/%i correct" % (template_name, test_options['library-checker-name'], ac_count, total_tests))
+        else:
+            if write_stats:
+                # TODO: add writing stats code
+                pass
+            print("%s passed on %s" % (template_name, test_options['library-checker-name']))
+            if "stats-format-string" in test_options:
+                print(stats_configs.get(test_options['stats-format-string']) % (slowest*1000, heaviest), end='')
+            else:
+                print("slowest %fms" % (slowest*1000))
+                print("heaviest %fMb" % heaviest)
     finally:
         if os.path.exists(ofile):
             os.remove(ofile)
-
-
 
 
 def run_all_test(template_name):

@@ -90,6 +90,12 @@ class StatsConfigReader:
             if name != "":
                 self.configs[name] = ''.join(text)
 
+    def get(self, val):
+        if val in self.configs:
+            return self.configs[val]
+        else:
+            return "%.0fms, %0.2fMb"
+
 # TODO: create a temp database with file hash
 # minus comments so that we can get averaged
 # more consistent timings
