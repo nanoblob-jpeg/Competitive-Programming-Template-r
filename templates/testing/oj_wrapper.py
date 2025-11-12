@@ -60,7 +60,7 @@ if __name__ == '__main__':
     args.extend(in_files)
     args.extend(out_files)
     a, b, c, d = run_wrapper(args)
-    print(a, b, c)
+    print(a, b, c, len(in_files))
 
 '''
 TODO:

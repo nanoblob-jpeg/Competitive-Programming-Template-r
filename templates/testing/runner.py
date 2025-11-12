@@ -1,10 +1,10 @@
-from template_reader import TemplateReader, TestTemplateWriter, ConfigReader, add_stats_to_file
+from template_reader import TemplateReader, TestTemplateWriter, ConfigReader, StatsConfigReader, add_stats_to_file
 import subprocess, os, shutil, sys
 basepath = __file__.replace("\\", "/").rsplit("/", 1)[0] + "/"
 
 # returns true if the subprocess executed successfully
 def generate_tests(test):
-    ret = subprocess.run(f"python {basepath}/library-checker-problems/generate.py -p {test}")
+    ret = subprocess.run(f"python {basepath}/library-checker-problems/generate.py --silent -p {test}")
     return ret.returncode == 0
 
 def cleanup_tests(test):
@@ -21,6 +21,12 @@ def cleanup_tests(test):
 test_configs = ConfigReader()
 test_configs.parse_file(f"{basepath}/tests.conf")
 
+stats_configs = StatsConfigReader()
+stats_configs.parse_file(f"{basepath}/stats.conf")
+
+just_template = False
+just_compile = False
+
 def run_test(template_name, test_options):
     # make sure we have all of the options we need
     if "library-checker-path" not in test_options or "library-checker-name" not in test_options or "test-template-file" not in test_options:
@@ -35,18 +41,38 @@ def run_test(template_name, test_options):
 
     # parse the template files
     tr = TemplateReader()
-    tr.parse_file(template_name)
+    tr.parse_file(f"{basepath}../{template_name}")
     if "additional-template-files-to-parse" in test_options:
         for file in test_options["additional-template-files-to-parse"]:
-            tr.parse_file(file)
+            tr.parse_file(f"{basepath}{file}")
 
     # write a temp file
-    ofile = "temp.cpp"
+    ofile = f"{basepath}temp.cpp"
     tw = TestTemplateWriter(ofile)
     alias_mapping = dict() if "test-replace-alias-mapping" not in test_options else test_options["test-replace-alias-mapping"]
     tw.template_test(test_options["test-template-file"], tr, alias_mapping)
 
-    # TODO: compile solution with -O2, then run wrapper
+    if just_template:
+        return
+
+    try:
+        # compile with O2
+        ret = subprocess.run(f"g++ -static -Wl,--stack=268435456 -O2 temp.cpp")
+        if ret.returncode != 0:
+            print("%s was unable to compile" % template_name)
+            print(ret.stdout)
+            print(ret.stderr)
+            return
+
+        if just_compile:
+            return
+
+        # TODO: now call oj to run compiled solution against all tests
+    finally:
+        if os.path.exists(ofile):
+            os.remove(ofile)
+
+
 
 
 def run_all_test(template_name):
@@ -79,10 +105,5 @@ def run_all_test(template_name):
 
 
 # TODO: delete this and add actual test parsing
-if not generate_tests("unionfind"):
-    print("failed in generation of test cases")
-    exit(0)
-
-#cleanup_tests(["data_structure", "unionfind"])
-
-
+# need to add parsing for passing silent to test generation also - off by default
+run_all_test("uf_base")

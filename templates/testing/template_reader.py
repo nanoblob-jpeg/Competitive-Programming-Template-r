@@ -65,6 +65,31 @@ class ConfigReader:
             for key, item in data.items():
                 self.configs[key] = item
 
+class StatsConfigReader:
+    def __init__(self):
+        self.configs = dict()
+
+    def parse_file(self, file):
+        with open(file, 'r') as f:
+            name = ""
+            text = []
+            nameline = False
+            for line in f.readlines():
+                if line.strip() == "//!":
+                    if name != "":
+                        self.configs[name] = ''.join(text)
+                    nameline = True
+                    name = ""
+                    text = []
+                elif nameline:
+                    name = line.strip()
+                    nameline = False
+                else:
+                    if line.strip() != "":
+                        text.append(line.strip() + '\n')
+            if name != "":
+                self.configs[name] = ''.join(text)
+
 # TODO: create a temp database with file hash
 # minus comments so that we can get averaged
 # more consistent timings
