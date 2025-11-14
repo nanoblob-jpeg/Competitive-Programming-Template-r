@@ -99,19 +99,27 @@ class StatsConfigReader:
 # TODO: create a temp database with file hash
 # minus comments so that we can get averaged
 # more consistent timings
-def add_stats_to_file(file, stats):
+def add_stats_to_file(file, stats, append = False):
     lines = []
     with open(file, 'r') as f:
         lines = f.readlines()
     assert len(lines) > 0
 
     try:
+        stat_lines = []
         newlines = [x for x in lines]
         for i in range(len(lines)):
             if '//! stats end' in lines[i]:
                 newlines = [x for x in lines[i+1:]]
+                stat_lines = [x for x in lines[:i]]
                 break
         with open(file, 'w') as f:
+            if append:
+                for line in stat_lines:
+                    if line.endswith('\n'):
+                        f.write(line)
+                    else:
+                        f.write(line + '\n')
             if stats.endswith('\n'):
                 f.write(stats)
             else:

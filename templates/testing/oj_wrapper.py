@@ -65,20 +65,3 @@ def run_wrapper_wrapper(test_path, silent = True):
     args.extend(out_files)
     ac_count, slowest, heaviest, hist = run_wrapper(args)
     return (ac_count, len(in_files), slowest, heaviest, hist)
-
-if __name__ == '__main__':
-    in_files = glob.glob('./library-checker-problems/data_structure/unionfind/in/*')
-    out_files = glob.glob('./library-checker-problems/data_structure/unionfind/out/*')
-    args = ['t', '--silent', '--format=library-checker-problems/data_structure/unionfind/%f/%s.%e', '--directory=./']
-    args.extend(in_files)
-    args.extend(out_files)
-    a, b, c, d = run_wrapper(args)
-    print(a, b, c, len(in_files))
-
-'''
-TODO:
-    write parser for the test files which increases stack size using the stsize thing we have
-    make this configurable to run the different tests
-    figure out how to parse the output from it
-    write config file for stats logging messages
-'''

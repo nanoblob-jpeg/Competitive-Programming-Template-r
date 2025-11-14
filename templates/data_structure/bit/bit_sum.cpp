@@ -2,6 +2,7 @@
 //  120ms, 11.99Mb
 //  n = q = 5e5
 //
+//! test start ds
 template <typename T>
 class bit{
 public:
@@ -47,3 +48,4 @@ public:
         return sum;
     }
 };
+//! test end ds

@@ -2,6 +2,7 @@
 //  111ms, 11.99Mb
 //  n = q = 5e5
 //
+//! test start ds
 template <typename T>
 class bit{
 public:
@@ -54,3 +55,4 @@ public:
         return comb(a, -b);
     }
 };
+//! test end ds

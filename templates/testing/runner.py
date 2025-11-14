@@ -1,23 +1,9 @@
+#!/usr/bin/env python
+
 from template_reader import TemplateReader, TestTemplateWriter, ConfigReader, StatsConfigReader, add_stats_to_file
 from oj_wrapper import run_wrapper_wrapper
-import subprocess, os, shutil, sys
+import subprocess, os, shutil, sys, argparse
 basepath = __file__.replace("\\", "/").rsplit("/", 1)[0] + "/"
-
-# returns true if the subprocess executed successfully
-def generate_tests(test):
-    ret = subprocess.run(f"python {basepath}/library-checker-problems/generate.py --silent -p {test}")
-    return ret.returncode == 0
-
-def cleanup_tests(test):
-    print("cleaning")
-    path = test if type(test) is str else '/'.join(test)
-    possible = "abcdefghijklmnopqrstuvwxyz-_/"
-    for c in path:
-        assert c in possible
-    if os.path.isdir(f"{basepath}/library-checker-problems/{path}/in"):
-        shutil.rmtree(f"{basepath}/library-checker-problems/{path}/in")
-    if os.path.isdir(f"{basepath}/library-checker-problems/{path}/out"):
-        shutil.rmtree(f"{basepath}/library-checker-problems/{path}/out")
 
 test_configs = ConfigReader()
 test_configs.parse_file(f"{basepath}/tests.conf")
@@ -28,7 +14,37 @@ stats_configs.parse_file(f"{basepath}/stats.conf")
 just_template = False
 just_compile = False
 
-def run_test(template_name, test_options, write_stats = False):
+seen_files = set()
+seen_files.add("data_structure/unionfind/uf.cpp")
+
+silent_generate = True
+
+write_stats = False
+
+# returns true if the subprocess executed successfully
+def generate_tests(test):
+    exec_string = f"python {basepath}/library-checker-problems/generate.py"
+    if silent_generate:
+        exec_string += " --silent "
+    exec_string += f" -p {test}"
+    ret = subprocess.run(exec_string)
+    return ret.returncode == 0
+
+def safe_file(file):
+    possible = "abcdefghijklmnopqrstuvwxyz-_/"
+    for c in file:
+        assert c in possible
+
+def cleanup_tests(test):
+    print("cleaning")
+    path = test if type(test) is str else '/'.join(test)
+    safe_file(path)
+    if os.path.isdir(f"{basepath}/library-checker-problems/{path}/in"):
+        shutil.rmtree(f"{basepath}/library-checker-problems/{path}/in")
+    if os.path.isdir(f"{basepath}/library-checker-problems/{path}/out"):
+        shutil.rmtree(f"{basepath}/library-checker-problems/{path}/out")
+
+def run_test(template_name, test_options, local_write_stats = True):
     # make sure we have all of the options we need
     if "library-checker-path" not in test_options or "library-checker-name" not in test_options or "test-template-file" not in test_options:
         print("%s has incorrect test options" % template_name)
@@ -68,26 +84,28 @@ def run_test(template_name, test_options, write_stats = False):
         if just_compile:
             return
 
-
         ac_count, total_tests, slowest, heaviest, hist = run_wrapper_wrapper(test_options['library-checker-path'])
         if ac_count != total_tests:
             print("%s failed on %s with %i/%i correct" % (template_name, test_options['library-checker-name'], ac_count, total_tests))
         else:
-            if write_stats:
-                # TODO: add writing stats code
-                pass
-            print("%s passed on %s" % (template_name, test_options['library-checker-name']))
+            stats_string = ""
             if "stats-format-string" in test_options:
-                print(stats_configs.get(test_options['stats-format-string']) % (slowest*1000, heaviest), end='')
+                stats_string = stats_configs.get(test_options['stats-format-string']) % (slowest*1000, heaviest)
             else:
-                print("slowest %fms" % (slowest*1000))
-                print("heaviest %fMb" % heaviest)
+                stats_string = "slowest %fms" % (slowest*1000) + '\n'
+                stats_string += "heaviest %fMb" % heaviest + '\n'
+            if write_stats and local_write_stats and "stats-format-string" in test_options:
+                safe_file(template_name.rsplit('/')[0])
+                add_stats_to_file(f"{basepath}../{template_name}", stats_string, template_name in seen_files)
+            print("%s passed on %s" % (template_name, test_options['library-checker-name']))
+            print(stats_string, end='')
+            seen_files.add(template_name)
     finally:
         if os.path.exists(ofile):
             os.remove(ofile)
 
 
-def run_all_test(template_name):
+def run_all_tests(template_name):
     if template_name in test_configs.configs:
         if "tests" not in test_configs.configs[template_name]:
             print("no tests configured for %s" % template_name)
@@ -115,7 +133,25 @@ def run_all_test(template_name):
                     run_test(temp_name, test)
 
 
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Local testing leveraging yosupo and oj')
+    parser.add_argument('--verbose', action='store_true', default=False)
+    parser.add_argument('--all', action='store_true', default=False)
+    parser.add_argument('--write-stats', action='store_true', default=False, dest='write_stats')
+    parser.add_argument('--template-only', action='store_true', default=False, dest="template_only")
+    parser.add_argument('--compile-only', action='store_true', default=False, dest="compile_only")
+    parser.add_argument('tests', nargs='*')
 
-# TODO: delete this and add actual test parsing
-# need to add parsing for passing silent to test generation also - off by default
-run_all_test("uf_base")
+    opts = parser.parse_args(sys.argv[1:])
+    just_template = opts.template_only
+    just_compile = opts.compile_only
+    silent_generate = not opts.verbose
+    write_stats = opts.write_stats
+
+    if opts.all:
+        for tests in test_configs.configs.keys():
+            run_all_tests(tests)
+        exit(0)
+
+    for test in opts.tests:
+        run_all_tests(test)
