@@ -6,6 +6,7 @@
 template <typename T, typename L, typename R>
 struct SegOp;
 
+//! test start ds
 template <typename T, typename L = T, typename R = T, template <typename, typename, typename> class Comb = SegOp>
 class segtree{
 public:
@@ -81,3 +82,4 @@ struct SegOp{
 
 template<>
 map<int, int> SegOp<map<int, int>, int, int>::identity = map<int, int>();
+//! test end ds

@@ -53,6 +53,7 @@ def run_wrapper(args):
     """
     return run(parsed)
 
+# TODO: configurable timeout per test
 def run_wrapper_wrapper(test_path, silent = True):
     in_files = glob.glob(f'./library-checker-problems/{test_path}/in/*')
     out_files = glob.glob(f'./library-checker-problems/{test_path}/out/*')
@@ -61,6 +62,7 @@ def run_wrapper_wrapper(test_path, silent = True):
         args.append('--silent')
     args.append(f'--format=library-checker-problems/{test_path}/%f/%s.%e')
     args.append('--directory=./')
+    args.append('--tle=10')
     args.extend(in_files)
     args.extend(out_files)
     ac_count, slowest, heaviest, hist = run_wrapper(args)

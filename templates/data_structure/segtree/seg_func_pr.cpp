@@ -6,6 +6,13 @@
 template <typename T>
 struct SegOp;
 
+const int MOD = 998244353;
+struct Func{
+    int m, b;
+    Func(int x = 1, int y = 0):m(x),b(y){}
+};
+
+//! test start ds
 template <typename T, template <typename> class Comb = SegOp>
 class segtree{
 public:
@@ -46,7 +53,7 @@ public:
         return Op::combine(lret, rret);
     }
 };
-const int MOD = 998244353;
+
 template <typename T>
 struct SegOp{
     static T identity;
@@ -59,11 +66,9 @@ struct SegOp{
         return b;
     }
 };
-struct Func{
-    int m, b;
-    Func(int x = 1, int y = 0):m(x),b(y){}
-};
+
 // defining Func identity = value, hence
 // the Func before SegOp
 template<>
 Func SegOp<Func>::identity = Func();
+//! test end ds

@@ -87,6 +87,17 @@ def run_test(template_name, test_options, local_write_stats = True):
         ac_count, total_tests, slowest, heaviest, hist = run_wrapper_wrapper(test_options['library-checker-path'])
         if ac_count != total_tests:
             print("%s failed on %s with %i/%i correct" % (template_name, test_options['library-checker-name'], ac_count, total_tests))
+            tle_count = 0
+            wa_count = 0
+            rte_count = 0
+            for test in hist:
+                if test['status'] == 'TLE':
+                    tle_count += 1
+                elif test['status'] == 'WA':
+                    wa_count += 1
+                elif test['status'] == 'RTE':
+                    rte_count += 1
+            print("TLE: %i ; WA: %i ; RTE %i" % (tle_count, wa_count, rte_count))
         else:
             stats_string = ""
             if "stats-format-string" in test_options:
@@ -94,6 +105,7 @@ def run_test(template_name, test_options, local_write_stats = True):
             else:
                 stats_string = "slowest %fms" % (slowest*1000) + '\n'
                 stats_string += "heaviest %fMb" % heaviest + '\n'
+            # TODO: parse test_options for local_write_stats
             if write_stats and local_write_stats and "stats-format-string" in test_options:
                 safe_file(template_name.rsplit('/')[0])
                 add_stats_to_file(f"{basepath}../{template_name}", stats_string, template_name in seen_files)
@@ -132,7 +144,7 @@ def run_all_tests(template_name):
                 for test in conf["tests"]:
                     run_test(temp_name, test)
 
-
+# TODO: allow for running specific tests under a specific template
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Local testing leveraging yosupo and oj')
     parser.add_argument('--verbose', action='store_true', default=False)
