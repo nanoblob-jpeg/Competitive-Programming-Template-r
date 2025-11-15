@@ -3,4 +3,4 @@ if [[ $# -eq 0 ]] ; then
 	echo 'need file name'
 	exit 1
 fi
-g++ -std=c++17 -DDEBUG $PWD/$1 -o $PWD/test
+g++ -std=c++17 -g -DDEBUG $PWD/$1 -o $PWD/test
