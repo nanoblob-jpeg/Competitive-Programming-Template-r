@@ -3,7 +3,7 @@
 from template_reader import TemplateReader, TestTemplateWriter, ConfigReader, StatsConfigReader, add_stats_to_file
 from oj_wrapper import run_wrapper_wrapper
 import subprocess, os, shutil, sys, argparse
-basepath = __file__.replace("\\", "/").rsplit("/", 1)[0] + "/"
+basepath = __file__.replace("\\", "/").rsplit("/", 1)[0] + '/'
 
 test_configs = ConfigReader()
 test_configs.parse_file(f"{basepath}/tests.conf")
@@ -27,7 +27,7 @@ def generate_tests(test):
     if silent_generate:
         exec_string += " --silent "
     exec_string += f" -p {test}"
-    ret = subprocess.run(exec_string)
+    ret = subprocess.run(exec_string, shell = True)
     return ret.returncode == 0
 
 def safe_file(file):
@@ -74,7 +74,7 @@ def run_test(template_name, test_options, local_write_stats = True):
 
     try:
         # compile with O2
-        ret = subprocess.run(f"g++ -static -Wl,--stack=268435456 -O2 temp.cpp")
+        ret = subprocess.run(f"g++ -static -O2 temp.cpp", shell=True)
         if ret.returncode != 0:
             print("%s was unable to compile" % template_name)
             print(ret.stdout)
