@@ -7,7 +7,7 @@ class prefixSum{
 public:
     vector<T> vals;
     prefixSum(vector<T>& in):vals(in.size()+1){
-        for(int i{}; i < vals.size(); ++i)
+        for(int i{}; i < in.size(); ++i)
             vals[i+1] = vals[i] + in[i];
     }
 

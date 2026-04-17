@@ -1,7 +1,7 @@
 def parse(fw, name, args):
     basepath = __file__.replace("\\", "/").rsplit("/", 1)[0] + "/"
     files = dict()
-    files['euler tour'] = basepath+'euler.txt'
+    files['euler_tour'] = basepath+'euler.txt'
     files['kuhn'] = basepath+'kuhn.txt'
     files['tarjan scc'] = basepath+'tarjan.txt'
 
